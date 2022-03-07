@@ -8,7 +8,8 @@
   "scripts": {
     "start": "node ./build/index.js",
     "build": "tsc -p .",
-    "dev": "nodemon ./src/index.ts"
+    "dev": "nodemon ./src/index.ts",
+    "knex": "./node_modules/.bin/knex --knexfile src/database/knexfile.ts"
   },
   "dependencies": {
     "@types/express": "^4.17.13",
