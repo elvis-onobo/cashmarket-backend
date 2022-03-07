@@ -1,0 +1,11 @@
+{
+  "name": "lendsqr",
+  "version": "1.0.0",
+  "description": "an e-Wallet test",
+  "main": "index.js",
+  "author": "Elvis Onobo",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
