@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  lendsqr_mysql:
+    container_name: lendsqr_mysql
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: on-failure
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: lendsqr_mysql
+      MYSQL_USER: u-user
+      MYSQL_PASSWORD: p-password
+    volumes:
+      - lendsqr_mysql:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+  lendsqr_redis:
+    container_name: lendsqr_redis
+    image: redis:6.2.6-alpine
+    restart: on-failure
+    environment:
+      REDIS_PASSWORD:
+    volumes:
+      - lendsqr_redis:/data
+    ports:
+      - '6379:6379'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+  lendsqr_phpmyadmin:
+    container_name: lendsqr_phpmyadmin
+    image: phpmyadmin
+    restart: 'unless-stopped'
+    environment:
+      VIRTUAL_HOST: phpmyadmin.lendsqr.localhost
+      UPLOAD_LIMIT: 100M
+      PMA_ARBITRARY: 1
+      PMA_HOST: lendsqr_mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - '8080:80'
+    depends_on:
+      - lendsqr_mysql
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+volumes:
+  lendsqr_mysql:
+  lendsqr_redis:
