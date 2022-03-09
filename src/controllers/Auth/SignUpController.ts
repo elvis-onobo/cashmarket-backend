@@ -11,11 +11,20 @@ export default class SignUpController {
 
    const hashedPassword = await argon2.hash(password)
 
-   const user = await db('users').insert({ id: uuid() , first_name, last_name, email, phone, password: hashedPassword })
+   const user = await db('users').insert({
+    uuid: uuid(),
+    first_name,
+    last_name,
+    email,
+    phone,
+    password: hashedPassword,
+   })
+
+   const userData = await db('users').where('id', user[0]).first()
 
    await RabbitMQ.consume('createUser', 'create::customer')
 
-   await RabbitMQ.publish('createUser', user)
+   await RabbitMQ.publish('createUser', userData)
 
    return res.status(200).json({
     message: 'Login successful!',

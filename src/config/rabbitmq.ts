@@ -38,8 +38,7 @@ export default class RabbitMQ {
                 if(message !== null){
                     const data = JSON.parse(message.content.toString())
                     // emit an event to call the appropriate function
-                    const emitted = eventsEmitter.emit(event, data)
-                    console.log({emitted})
+                    eventsEmitter.emit(event, data)
                     process.ack(message)
                 }
             })

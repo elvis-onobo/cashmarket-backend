@@ -10,7 +10,7 @@ export async function seed(knex: Knex): Promise<void> {
 
     // Inserts seed entries
     await knex("users").insert([
-        { id: uuid(), first_name: "Elvis", last_name: "Onobo", email: "elvis@gmail.com", phone: '08023456789',password},
-        { id: uuid(), first_name: "Faith", last_name: "Onobo", email: "faith@gmail.com", phone: '08023456780',password},
+        { uuid: uuid(), first_name: "Elvis", last_name: "Onobo", email: "elvis@gmail.com", phone: '08023456789',password},
+        { uuid: uuid(), first_name: "Faith", last_name: "Onobo", email: "faith@gmail.com", phone: '08023456780',password},
     ]);
 };
