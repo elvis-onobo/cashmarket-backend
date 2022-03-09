@@ -50,6 +50,17 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
+  lendsqr_rabbitmq:
+    container_name: lendsqr_rabbitmq
+    image: 'rabbitmq:3.9.13-management'
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    hostname: lendsqr_rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
 volumes:
   lendsqr_mysql:
   lendsqr_redis:

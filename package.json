@@ -12,9 +12,11 @@
     "knex": "./node_modules/.bin/knex --knexfile src/database/knexfile.ts"
   },
   "dependencies": {
+    "@types/amqplib": "^0.8.2",
     "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^17.0.21",
+    "amqplib": "^0.8.0",
     "argon2": "^0.28.5",
     "axios": "^0.26.0",
     "dotenv": "^16.0.0",
