@@ -1,9 +1,11 @@
-import express, {Request, Response} from 'express'
+import express from 'express'
 const router = express.Router()
-
-// controllers
-import HealthCheck from './controllers/HealthCheckController'
 
 export default router
 
+// controllers
+import HealthCheck from './controllers/HealthCheckController'
+import LoginController from './controllers/LoginController'
+
 router.get('/healthcheck', HealthCheck.check)
+router.post('/login', LoginController.login)
