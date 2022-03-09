@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import argon2 from 'argon2'
 import jsonwebtoken from 'jsonwebtoken'
-import db from '../database/db'
+import db from '../../database/db'
 
 export default class LoginController {
  public static async login(req: Request, res: Response): Promise<object> {
