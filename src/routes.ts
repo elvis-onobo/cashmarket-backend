@@ -20,5 +20,6 @@ router.post('/signup', SignUpController.signup)
 router.get('/create-account', authMiddleware, CreateAccountController.create)
 router.post('/tranfer', authMiddleware, InternalTransferController.send)
 router.post('/verify-account', authMiddleware, WithdrawalsController.verifyAccount)
+router.post('/withdraw', authMiddleware, WithdrawalsController.withdraw)
 
 router.post('/webhook', WebhookController.trigger)
