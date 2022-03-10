@@ -2,8 +2,14 @@ import { Request, Response } from "express";
 import {uuid} from 'uuidv4'
 import {Paystack} from '../config/axios-paystack'
 import db from '../database/db'
-
+import WithdrawalsController from './WithdrawalsController'
 export default class CreateAccountController {
+    /**
+     * Create a NUBAN account for the user
+     * @param req 
+     * @param res 
+     * @returns 
+     */
     public static async create(req: Request, res: Response): Promise<object>{
         try {
             const userCustomerInfo = await db('customers').where('user_id', req.userInfo.id).first()
