@@ -12,9 +12,7 @@ eventsEmitter.on('create::customer', async(data)=>{
         "first_name": data.first_name,
         "last_name": data.last_name,
         "phone": data.phone
-    }, { headers: {
-        'Authorization': `Bearer ${process.env.PAYSTACK_SECRET}`
-    }})
+    })
 
     await db('customers').insert({ user_id: data.id, uuid: uuid(),customer_code: res.data.data.customer_code })
 })

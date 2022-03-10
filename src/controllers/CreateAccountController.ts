@@ -14,9 +14,7 @@ export default class CreateAccountController {
 
             const result = await Paystack.post('dedicated_account', { 
                 customer: userCustomerInfo.customer_code, preferred_bank: "wema-bank"
-            }, { headers: {
-                'Authorization': `Bearer ${process.env.PAYSTACK_SECRET}`
-            }})
+            })
             
             if(result.data.status === true){
                 await db('accounts').insert({ 
