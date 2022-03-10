@@ -13,7 +13,7 @@ export default class LoginController {
 
    if (!passwordMatch) {
     return res.status(400).json({
-        message: 'Incorrect login parameters!',
+        message: 'Incorrect login credentials!',
     })
    }
    
