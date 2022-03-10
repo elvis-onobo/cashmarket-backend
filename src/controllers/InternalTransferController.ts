@@ -9,21 +9,24 @@ export default class InternalTransferController {
   try {
    // TODO: validation
    const { email, amount } = req.body
-   const amountInKobo = amount * 100
+   const amountInKobo: number = amount * 100
+   const status: string = 'success'
 
    const senderAccountBalance = await db('wallets')
     .where('user_id', req.userInfo.id)
     .sum('amount as balance')
 
-   if (senderAccountBalance[0].balance < amountInKobo){
-       return res.json({
-        message: 'Insufficient funds',
-       })
+   if (senderAccountBalance[0].balance < amountInKobo) {
+    return res.json({
+     message: 'Insufficient funds',
+    })
    }
 
    const ref = randomstring.generate(12)
    // get ID of user receiving the money
    const user = await db('users').where('email', email).first()
+
+   // ! Use database transactions
 
    // credit the receiver
    await db('wallets').insert({
@@ -31,6 +34,7 @@ export default class InternalTransferController {
     user_id: user.id,
     amount: amountInKobo,
     reference: ref,
+    status,
    })
 
    // debit the sender
@@ -39,6 +43,7 @@ export default class InternalTransferController {
     user_id: req.userInfo.id,
     amount: -amountInKobo,
     reference: ref,
+    status,
    })
 
    return res.status(200).json({

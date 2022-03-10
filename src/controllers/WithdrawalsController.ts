@@ -78,7 +78,8 @@ export default class WithdrawalsController {
                 uuid: uuid(),
                 user_id: req.userInfo.id,
                 amount: -amountInKobo,
-                reference: data.data.reference
+                reference: data.data.reference,
+                status: 'pending'
             })
 
             return res.status(202).json({ 

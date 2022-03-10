@@ -6,6 +6,8 @@ import {Paystack} from '../config/axios-paystack'
 const eventsEmitter = new EventEmitter()
 export default eventsEmitter
 
+const status = 'success'
+
 eventsEmitter.on('create::customer', async(data)=>{
     const res = await Paystack.post('customer', {
         "email": data.email,
@@ -45,5 +47,10 @@ eventsEmitter.on('create::tranferrecipient', async(data)=>{
     //  get the customer to receive the payment
     const customer = await db('customers').where({ customer_code: data.customer.customer_code}).first()
     //  make deposit to user's account
-    await db('wallets').insert({ user_id: customer.user_id, uuid: uuid(), amount: data.amount, reference: data.reference })
+    await db('wallets').insert({ user_id: customer.user_id, uuid: uuid(), amount: data.amount, reference: data.reference, status })
+})
+
+eventsEmitter.on('transfer.success', async({data})=>{
+    //  get the transaction and update its status
+    const tranx = await db('wallets').where({'reference': data.reference}).update({ status })
 })
