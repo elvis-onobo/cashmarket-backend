@@ -18,3 +18,13 @@ eventsEmitter.on('create::customer', async(data)=>{
 
     await db('customers').insert({ user_id: data.id, uuid: uuid(),customer_code: res.data.data.customer_code })
 })
+
+/**
+ * Paystack Events
+ */
+ eventsEmitter.on('charge.success', async({data})=>{
+    //  get the customer to receive the payment
+    const customer = await db('customers').where({ customer_code: data.customer.customer_code}).first()
+    //  make deposit to user's account
+    await db('wallets').insert({ user_id: customer.user_id, uuid: uuid(), amount: data.amount, reference: data.reference })
+})
