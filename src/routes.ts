@@ -3,6 +3,8 @@ const router = express.Router()
 
 export default router
 
+// middleware
+import authMiddleware from './middleware/authMiddleware'
 // controllers
 import HealthCheck from './controllers/HealthCheckController'
 import LoginController from './controllers/Auth/LoginController'
