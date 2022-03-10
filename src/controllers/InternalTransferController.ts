@@ -11,39 +11,39 @@ export default class InternalTransferController {
    const { email, amount } = req.body
    const amountInKobo: number = amount * 100
    const status: string = 'success'
-
-   const senderAccountBalance = await db('wallets')
-    .where('user_id', req.userInfo.id)
-    .sum('amount as balance')
-
-   if (senderAccountBalance[0].balance < amountInKobo) {
-    return res.json({
-     message: 'Insufficient funds',
-    })
-   }
-
    const ref = randomstring.generate(12)
-   // get ID of user receiving the money
-   const user = await db('users').where('email', email).first()
 
-   // ! Use database transactions
+   await db.transaction(async (trx) => {
+    const senderAccountBalance = await trx('wallets')
+     .where('user_id', req.userInfo.id)
+     .sum('amount as balance')
 
-   // credit the receiver
-   await db('wallets').insert({
-    uuid: uuid(),
-    user_id: user.id,
-    amount: amountInKobo,
-    reference: ref,
-    status,
-   })
+    if (senderAccountBalance[0].balance < amountInKobo) {
+     return res.json({
+      message: 'Insufficient funds',
+     })
+    }
 
-   // debit the sender
-   await db('wallets').insert({
-    uuid: uuid(),
-    user_id: req.userInfo.id,
-    amount: -amountInKobo,
-    reference: ref,
-    status,
+    // get ID of user receiving the money
+    const user = await trx('users').where('email', email).first()
+
+    // credit the receiver
+    await trx('wallets').insert({
+     uuid: uuid(),
+     user_id: user.id,
+     amount: amountInKobo,
+     reference: ref,
+     status,
+    })
+
+    // debit the sender
+    await trx('wallets').insert({
+     uuid: uuid(),
+     user_id: req.userInfo.id,
+     amount: -amountInKobo,
+     reference: ref,
+     status,
+    })
    })
 
    return res.status(200).json({
