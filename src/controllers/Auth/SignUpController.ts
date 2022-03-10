@@ -7,7 +7,8 @@ import RabbitMQ from '../../config/rabbitmq'
 export default class SignUpController {
  public static async signup(req: Request, res: Response): Promise<object> {
   try {
-   const { first_name, last_name, email, phone, password } = req.body
+      // TODO: validation
+      const { first_name, last_name, email, phone, password } = req.body
 
    const hashedPassword = await argon2.hash(password)
 

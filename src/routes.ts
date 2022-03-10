@@ -11,9 +11,12 @@ import LoginController from './controllers/Auth/LoginController'
 import SignUpController from './controllers/Auth/SignUpController'
 import CreateAccountController from './controllers/CreateAccountController'
 import WebhookController from './controllers/WebhookController'
+import InternalTransferController from './controllers/InternalTransferController'
 
 router.get('/healthcheck', HealthCheck.check)
 router.post('/login', LoginController.login)
 router.post('/signup', SignUpController.signup)
-router.get('/create-account', authMiddleware,CreateAccountController.create)
+router.get('/create-account', authMiddleware, CreateAccountController.create)
+router.post('/tranfer', authMiddleware, InternalTransferController.send)
+
 router.post('/webhook', WebhookController.trigger)
