@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1646980814750" clover="3.2.0">
-  <project timestamp="1646980814750" name="All files">
-    <metrics statements="198" coveredstatements="91" conditionals="18" coveredconditionals="1" methods="25" coveredmethods="2" elements="241" coveredelements="94" complexity="0" loc="198" ncloc="198" packages="7" files="15" classes="15"/>
+<coverage generated="1646981259510" clover="3.2.0">
+  <project timestamp="1646981259510" name="All files">
+    <metrics statements="198" coveredstatements="94" conditionals="18" coveredconditionals="1" methods="25" coveredmethods="2" elements="241" coveredelements="97" complexity="0" loc="198" ncloc="198" packages="7" files="15" classes="15"/>
     <package name="src">
       <metrics statements="27" coveredstatements="27" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="index.ts" path="/Users/ElvisO/Workspace/lendsqr/src/index.ts">
@@ -167,7 +167,7 @@
       </file>
     </package>
     <package name="src.controllers.Auth">
-      <metrics statements="29" coveredstatements="14" conditionals="2" coveredconditionals="0" methods="2" coveredmethods="1"/>
+      <metrics statements="29" coveredstatements="17" conditionals="2" coveredconditionals="0" methods="2" coveredmethods="1"/>
       <file name="LoginController.ts" path="/Users/ElvisO/Workspace/lendsqr/src/controllers/Auth/LoginController.ts">
         <metrics statements="15" coveredstatements="4" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="2" count="3" type="stmt"/>
@@ -187,7 +187,7 @@
         <line num="34" count="0" type="stmt"/>
       </file>
       <file name="SignUpController.ts" path="/Users/ElvisO/Workspace/lendsqr/src/controllers/Auth/SignUpController.ts">
-        <metrics statements="14" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <metrics statements="14" coveredstatements="13" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="2" count="3" type="stmt"/>
         <line num="3" count="3" type="stmt"/>
         <line num="4" count="3" type="stmt"/>
@@ -197,11 +197,11 @@
         <line num="11" count="1" type="stmt"/>
         <line num="13" count="1" type="stmt"/>
         <line num="15" count="1" type="stmt"/>
-        <line num="24" count="0" type="stmt"/>
-        <line num="26" count="0" type="stmt"/>
-        <line num="28" count="0" type="stmt"/>
-        <line num="30" count="0" type="stmt"/>
-        <line num="35" count="1" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
       </file>
     </package>
     <package name="src.database">
