@@ -9,7 +9,7 @@ jest.mock('../../../config/rabbitmq', ()=>({
 
 // TODO: tear down data at end of test
 
-describe('Sign Up', function() {
+describe('Authenticate User', function() {
     test.only('Should sign up a user', async function() {
         const response = await supertest(app).post('/signup')
             .send({ 
@@ -17,10 +17,21 @@ describe('Sign Up', function() {
                 first_name: "El",
                 last_name: "unyi",
                 email: "unyione12@gmails.com",
-                phone: "08123244412",
+                phone: "08123244",
                 password:"p@55w0rd"
             })
-            console.log('>>>>>>>> signup >>>>> ', response);
+            
+        expect(response.status).toBe(200)
+        expect(RabbitMQ.publish).toHaveBeenCalled()
+    });
+
+    test.only('Should log in a user', async function() {
+        const response = await supertest(app).post('/login')
+            .send({ 
+                // TODO: use fixtures instead of baking data
+                email: "unyione12@gmails.com",
+                password:"p@55w0rd"
+            })
             
         expect(response.status).toBe(200)
         expect(RabbitMQ.publish).toHaveBeenCalled()
