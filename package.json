@@ -10,7 +10,7 @@
     "build": "tsc -p .",
     "dev": "nodemon ./src/server.ts",
     "knex": "./node_modules/.bin/knex --knexfile src/database/knexfile.ts",
-    "test": "jest --detectOpenHandles --coverage --verbose"
+    "test": "jest --detectOpenHandles --coverage --verbose --forceExit"
   },
   "dependencies": {
     "@types/amqplib": "^0.8.2",
