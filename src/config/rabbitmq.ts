@@ -21,6 +21,7 @@ export default class RabbitMQ {
             const process = await this.connect()
             await process.assertQueue(channel)
             process.sendToQueue(channel, Buffer.from(dataToPublish))
+            process.close()
         } catch (error) {
             console.log('Error publishing data >>> ', error)
         }
@@ -40,6 +41,7 @@ export default class RabbitMQ {
                     // emit an event to call the appropriate function
                     eventsEmitter.emit(event, data)
                     process.ack(message)
+                    process.close()
                 }
             })
         } catch (error) {
