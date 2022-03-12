@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1647096088837" clover="3.2.0">
-  <project timestamp="1647096088838" name="All files">
-    <metrics statements="203" coveredstatements="154" conditionals="18" coveredconditionals="4" methods="25" coveredmethods="14" elements="246" coveredelements="172" complexity="0" loc="203" ncloc="203" packages="8" files="18" classes="18"/>
+<coverage generated="1647096355434" clover="3.2.0">
+  <project timestamp="1647096355434" name="All files">
+    <metrics statements="203" coveredstatements="155" conditionals="18" coveredconditionals="4" methods="25" coveredmethods="14" elements="246" coveredelements="173" complexity="0" loc="203" ncloc="203" packages="8" files="18" classes="18"/>
     <package name="src">
       <metrics statements="27" coveredstatements="27" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="index.ts" path="/Users/ElvisO/Workspace/lendsqr/src/index.ts">
@@ -73,7 +73,7 @@
       </file>
     </package>
     <package name="src.controllers">
-      <metrics statements="78" coveredstatements="59" conditionals="11" coveredconditionals="3" methods="10" coveredmethods="9"/>
+      <metrics statements="78" coveredstatements="60" conditionals="11" coveredconditionals="3" methods="10" coveredmethods="9"/>
       <file name="CreateAccountController.ts" path="/Users/ElvisO/Workspace/lendsqr/src/controllers/CreateAccountController.ts">
         <metrics statements="13" coveredstatements="11" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="1"/>
         <line num="2" count="7" type="stmt"/>
@@ -96,7 +96,7 @@
         <line num="5" count="1" type="stmt"/>
       </file>
       <file name="InternalTransferController.ts" path="/Users/ElvisO/Workspace/lendsqr/src/controllers/InternalTransferController.ts">
-        <metrics statements="18" coveredstatements="15" conditionals="1" coveredconditionals="0" methods="3" coveredmethods="3"/>
+        <metrics statements="18" coveredstatements="16" conditionals="1" coveredconditionals="0" methods="3" coveredmethods="3"/>
         <line num="2" count="7" type="stmt"/>
         <line num="3" count="7" type="stmt"/>
         <line num="5" count="7" type="stmt"/>
@@ -112,9 +112,9 @@
         <line num="22" count="0" type="stmt"/>
         <line num="28" count="1" type="stmt"/>
         <line num="31" count="1" type="stmt"/>
-        <line num="40" count="0" type="stmt"/>
-        <line num="49" count="0" type="stmt"/>
-        <line num="53" count="1" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="49" count="1" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
       </file>
       <file name="WebhookController.ts" path="/Users/ElvisO/Workspace/lendsqr/src/controllers/WebhookController.ts">
         <metrics statements="15" coveredstatements="14" conditionals="3" coveredconditionals="1" methods="1" coveredmethods="1"/>

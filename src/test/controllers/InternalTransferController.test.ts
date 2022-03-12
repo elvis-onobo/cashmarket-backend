@@ -3,7 +3,7 @@ import app from '../../index'
 import {newUser} from '../fixtures/users'
 
 describe('Tranfer Funds', function() {
-    test('Should receive a 200', async function() {
+    test('Should process internal app tranfer', async function() {
         const response = await supertest(app).post('/transfer')
             .set('Authorization', 'Bearer ' + newUser[1].token)
             .send({

@@ -19,7 +19,7 @@ const res = {
 }
 
 describe('Create Account', function() {
-    test.only('should return a 200 status', async function() {
+    test.only('should create an account for a user', async function() {
         mockedAxios.post.mockResolvedValue({ data: res})
 
         const response = await supertest(app).get('/create-account')
