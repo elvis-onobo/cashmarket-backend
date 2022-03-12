@@ -3,10 +3,7 @@ import app from '../../../index'
 import RabbitMQ from '../../../config/rabbitmq'
 import {newUser} from '../../fixtures/users'
 
-jest.mock('../../../config/rabbitmq', ()=>({
-    publish: jest.fn(),
-    consume: jest.fn(),
-}))
+jest.mock('../../../config/rabbitmq')
 
 describe('Authenticate User', function() {
     test('Should sign up a user', async function() {
