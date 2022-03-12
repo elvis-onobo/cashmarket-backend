@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { v4 as uuidv4 } from 'uuid'
 import {Paystack} from '../config/axios-paystack'
 import db from '../database/db'
-import WithdrawalsController from './WithdrawalsController'
 export default class CreateAccountController {
     /**
      * Create a NUBAN account for the user
@@ -21,6 +20,7 @@ export default class CreateAccountController {
             const result = await Paystack.post('dedicated_account', { 
                 customer: userCustomerInfo.customer_code, preferred_bank: "wema-bank"
             })
+            // console.log('>>>>>>>>>> 1', result);
             
             if(result.data.status === true){
                 await db('accounts').insert({ 

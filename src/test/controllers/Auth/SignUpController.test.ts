@@ -1,7 +1,7 @@
 import supertest from 'supertest'
 import app from '../../../index'
 import RabbitMQ from '../../../config/rabbitmq'
-import {user1} from '../../fixtures/users'
+import {newUser} from '../../fixtures/users'
 
 jest.mock('../../../config/rabbitmq', ()=>({
     publish: jest.fn(),
@@ -12,11 +12,11 @@ describe('Authenticate User', function() {
     test('Should sign up a user', async function() {
         const response = await supertest(app).post('/signup')
             .send({ 
-                first_name: user1.first_name,
-                last_name: user1.last_name,
-                email: user1.email,
-                phone: user1.phone,
-                password: user1.password
+                first_name: newUser[0].first_name,
+                last_name: newUser[0].last_name,
+                email: newUser[0].email,
+                phone: newUser[0].phone,
+                password: newUser[0].password
             })
 
         expect(response.status).toBe(200)
@@ -27,8 +27,8 @@ describe('Authenticate User', function() {
     test('Should log in a user', async function() {
         const response = await supertest(app).post('/login')
             .send({ 
-                email: user1.email,
-                password: user1.password
+                email: newUser[0].email,
+                password: newUser[0].password
             })
             
         expect(response.status).toBe(200)
