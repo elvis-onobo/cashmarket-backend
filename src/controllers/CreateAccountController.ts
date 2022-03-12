@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import {uuid} from 'uuidv4'
+import { v4 as uuidv4 } from 'uuid'
 import {Paystack} from '../config/axios-paystack'
 import db from '../database/db'
 import WithdrawalsController from './WithdrawalsController'
@@ -24,7 +24,7 @@ export default class CreateAccountController {
             
             if(result.data.status === true){
                 await db('accounts').insert({ 
-                    uuid: uuid(),
+                    uuid: uuidv4(),
                     user_id: req.userInfo.id,
                     bank: result.data.data.bank.name,
                     bank_slug: result.data.data.bank.slug,

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import argon2 from 'argon2'
-import { uuid } from 'uuidv4'
+import { v4 as uuidv4 } from 'uuid'
 import db from '../../database/db'
 import RabbitMQ from '../../config/rabbitmq'
 
@@ -13,7 +13,7 @@ export default class SignUpController {
    const hashedPassword = await argon2.hash(password)
 
    const user = await db('users').insert({
-    uuid: uuid(),
+    uuid: uuidv4(),
     first_name,
     last_name,
     email,

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { uuid } from 'uuidv4'
+import { v4 as uuidv4 } from 'uuid'
 import randomstring from 'randomstring'
 
 import db from '../database/db'
@@ -29,7 +29,7 @@ export default class InternalTransferController {
 
     // credit the receiver
     await trx('wallets').insert({
-     uuid: uuid(),
+     uuid: uuidv4(),
      user_id: user.id,
      amount: amountInKobo,
      reference: ref,
@@ -38,7 +38,7 @@ export default class InternalTransferController {
 
     // debit the sender
     await trx('wallets').insert({
-     uuid: uuid(),
+     uuid: uuidv4(),
      user_id: req.userInfo.id,
      amount: -amountInKobo,
      reference: ref,

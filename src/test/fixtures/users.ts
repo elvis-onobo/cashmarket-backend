@@ -1,0 +1,8 @@
+export const user1 = {
+    first_name: "El",
+    last_name: "unyi",
+    email: "unyione12@gmails.com",
+    phone: "08123244",
+    password:"p@55w0rd",
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidXVpZCI6IjQ0ZDFkMGZjLWQxZjItNGI2NC05MjQ0LWI3ZDA3YjNiZjFmNSIsImZpcnN0X25hbWUiOiJFbCIsImxhc3RfbmFtZSI6InVueWkiLCJlbWFpbCI6InVueWlvbmUxMkBnbWFpbHMuY29tIiwicGhvbmUiOiIwODEyMzI0NCIsInBhc3N3b3JkIjoiJGFyZ29uMmkkdj0xOSRtPTQwOTYsdD0zLHA9MSRFUDhiR1ZKZ0VjU3NsbmsrQWhnbkdBJDJMU2NIb2FpR1I5WHpkZVl3Q3dUdGFVTk9VRGdQT0dzK3BCVW9ZOTRzV28iLCJjcmVhdGVkX2F0IjoiMjAyMi0wMy0xMlQwNzozODowMS4wMDBaIiwidXBkYXRlZF9hdCI6IjIwMjItMDMtMTJUMDc6Mzg6MDEuMDAwWiIsImlhdCI6MTY0NzA3NDI4MX0.yxdyQl9J8MZpe94pUMRpg5wiqgjvIhqmdNRQyzhGQmQ"
+}

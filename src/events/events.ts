@@ -1,5 +1,5 @@
 import EventEmitter from "events"
-import {uuid} from 'uuidv4'
+import { v4 as uuidv4 } from 'uuid'
 import db from "../database/db"
 import {Paystack} from '../config/axios-paystack'
 
@@ -16,7 +16,7 @@ eventsEmitter.on('create::customer', async(data)=>{
         "phone": data.phone
     })
 
-    await db('customers').insert({ user_id: data.id, uuid: uuid(),customer_code: res.data.data.customer_code })
+    await db('customers').insert({ user_id: data.id, uuid: uuidv4(),customer_code: res.data.data.customer_code })
 })
 
 // creates transfer recipient code for withdrawals
@@ -31,7 +31,7 @@ eventsEmitter.on('create::tranferrecipient', async(data)=>{
 
     await db('bank_accounts').insert({ 
         user_id: data.user.id, 
-        uuid: uuid(), 
+        uuid: uuidv4(), 
         account_name: data.account_data.account_name, 
         account_number:  data.account_data.account_number,
         bank_id: data.account_data.bank_id,
@@ -47,7 +47,7 @@ eventsEmitter.on('create::tranferrecipient', async(data)=>{
     //  get the customer to receive the payment
     const customer = await db('customers').where({ customer_code: data.customer.customer_code}).first()
     //  make deposit to user's account
-    await db('wallets').insert({ user_id: customer.user_id, uuid: uuid(), amount: data.amount, reference: data.reference, status })
+    await db('wallets').insert({ user_id: customer.user_id, uuid: uuidv4(), amount: data.amount, reference: data.reference, status })
 })
 
 eventsEmitter.on('transfer.success', async({data})=>{

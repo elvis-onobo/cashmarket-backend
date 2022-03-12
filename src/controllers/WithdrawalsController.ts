@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { uuid } from 'uuidv4'
+import { v4 as uuidv4 } from 'uuid'
 import { Paystack } from '../config/axios-paystack'
 import db from '../database/db'
 import RabbitMQ from '../config/rabbitmq'
@@ -76,7 +76,7 @@ export default class WithdrawalsController {
 
     // debit the amount from user wallet
     await trx('wallets').insert({
-     uuid: uuid(),
+     uuid: uuidv4(),
      user_id: req.userInfo.id,
      amount: -amountInKobo,
      reference: data.data.reference,
