@@ -1,7 +1,7 @@
 import EventEmitter from "events"
 import { v4 as uuidv4 } from 'uuid'
 import db from "../database/db"
-import {Paystack} from '../config/axios-paystack'
+import Paystack from '../config/axios-paystack'
 
 const eventsEmitter = new EventEmitter()
 export default eventsEmitter

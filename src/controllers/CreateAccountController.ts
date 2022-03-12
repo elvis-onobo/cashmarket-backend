@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from 'uuid'
-import {Paystack} from '../config/axios-paystack'
+import Paystack from '../config/axios-paystack'
 import db from '../database/db'
 export default class CreateAccountController {
     /**
@@ -16,11 +16,10 @@ export default class CreateAccountController {
             if(!userCustomerInfo) return res.status(404).json({ 
                 message: 'No customer record exists for this user'
             })
-
+            
             const result = await Paystack.post('dedicated_account', { 
                 customer: userCustomerInfo.customer_code, preferred_bank: "wema-bank"
             })
-            // console.log('>>>>>>>>>> 1', result);
             
             if(result.data.status === true){
                 await db('accounts').insert({ 

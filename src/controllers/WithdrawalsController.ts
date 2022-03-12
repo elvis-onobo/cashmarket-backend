@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { v4 as uuidv4 } from 'uuid'
-import { Paystack } from '../config/axios-paystack'
+import Paystack from '../config/axios-paystack'
 import db from '../database/db'
 import RabbitMQ from '../config/rabbitmq'
 export default class WithdrawalsController {
