@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">31.25% </span>
+                <span class="strong">82.35% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>5/16</span>
+                <span class='fraction'>14/17</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>1/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">35.71% </span>
+                <span class="strong">93.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>5/14</span>
+                <span class='fraction'>14/15</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -90,53 +90,55 @@
 <a name='L25'></a><a href='#L25'>25</a>
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a>
-<a name='L28'></a><a href='#L28'>28</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Request, Response } from "express"
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Request, Response } from 'express'
 import crypto from 'crypto'
 import dotenv from 'dotenv'
 import eventsEmitter from '../events/events'
 dotenv.config({ path: '../../.env' })
-&nbsp;
 export default class WebhookController {
-    public <span class="fstat-no" title="function not covered" >static </span>async trigger(req: Request, res: Response): Promise&lt;Response|void&gt; {
-<span class="cstat-no" title="statement not covered" >        try {</span>
-            const data= <span class="cstat-no" title="statement not covered" >req.body;</span>
-            const secretKey = <span class="cstat-no" title="statement not covered" >process.env.PAYSTACK_SECRET</span>
-<span class="cstat-no" title="statement not covered" >            <span class="missing-if-branch" title="if path not taken" >I</span>if(!secretKey) <span class="cstat-no" title="statement not covered" >return res.status(404).json({ message: 'Secret Key Not Found' })</span></span>
+    public static async trigger(req: Request, res: Response): Promise&lt;Response|void&gt; {
+        try {
+            const data = req.body;
 &nbsp;
-            const hash = <span class="cstat-no" title="statement not covered" >crypto.createHmac('sha512', secretKey).update(JSON.stringify(data)).digest('hex');</span>
-            
-<span class="cstat-no" title="statement not covered" >            <span class="missing-if-branch" title="if path not taken" >I</span>if (hash == req.headers['x-paystack-signature']) {</span>
-                // emit an event to handle the data received
-                const eventEmitted = <span class="cstat-no" title="statement not covered" >eventsEmitter.emit(data.event, data)</span>
-<span class="cstat-no" title="statement not covered" >                <span class="missing-if-branch" title="if path not taken" >I</span>if(eventEmitted) <span class="cstat-no" title="statement not covered" >res.sendStatus(200)</span></span>
+            const secretKey = process.env.PAYSTACK_SECRET
+            <span class="missing-if-branch" title="if path not taken" >I</span>if(!secretKey) <span class="cstat-no" title="statement not covered" >return res.status(404).json({ message: 'Secret Key Not Found' })</span>
+&nbsp;
+            const hash = crypto.createHmac('sha512', secretKey.toString()).update(JSON.stringify(data)).digest('hex')
+&nbsp;
+            if (hash == req.headers['x-paystack-signature']) {
+                const emitted = eventsEmitter.emit(data.event, data)
+                <span class="missing-if-branch" title="if path not taken" >I</span>if(!emitted) <span class="cstat-no" title="statement not covered" >return res.sendStatus(500)</span>
             }
+            return res.sendStatus(200)
         } catch (error) {
             // ! Add logger (Sentry etc)
 <span class="cstat-no" title="statement not covered" >            return res.status(200).json({</span>
@@ -144,14 +146,15 @@ export default class WebhookController {
             })
         }
     }
-}</pre></td></tr></table></pre>
+}
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Fri Mar 11 2022 07:52:07 GMT+0100 (West Africa Standard Time)
+                at Sat Mar 12 2022 09:41:21 GMT+0100 (West Africa Standard Time)
             </div>
         <script src="../../prettify.js"></script>
         <script>

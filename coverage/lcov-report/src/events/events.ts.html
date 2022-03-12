@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">59.09% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>11/22</span>
+                <span class='fraction'>13/22</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">25% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>2/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">61.11% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>11/18</span>
+                <span class='fraction'>12/18</span>
             </div>
         
             
@@ -118,17 +118,17 @@
 <a name='L53'></a><a href='#L53'>53</a>
 <a name='L54'></a><a href='#L54'>54</a>
 <a name='L55'></a><a href='#L55'>55</a>
-<a name='L56'></a><a href='#L56'>56</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<a name='L56'></a><a href='#L56'>56</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -140,7 +140,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -163,18 +163,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import EventEmitter from "events"
-import {uuid} from 'uuidv4'
+import { v4 as uuidv4 } from 'uuid'
 import db from "../database/db"
 import {Paystack} from '../config/axios-paystack'
 &nbsp;
@@ -191,7 +191,7 @@ eventsEmitter.on('create::customer', <span class="fstat-no" title="function not 
         "phone": data.phone
     })
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    await db('customers').insert({ user_id: data.id, uuid: uuid(),customer_code: res.data.data.customer_code })</span>
+<span class="cstat-no" title="statement not covered" >    await db('customers').insert({ user_id: data.id, uuid: uuidv4(),customer_code: res.data.data.customer_code })</span>
 })
 &nbsp;
 // creates transfer recipient code for withdrawals
@@ -206,7 +206,7 @@ eventsEmitter.on('create::tranferrecipient', <span class="fstat-no" title="funct
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    await db('bank_accounts').insert({ </span>
         user_id: data.user.id, 
-        uuid: uuid(), 
+        uuid: uuidv4(), 
         account_name: data.account_data.account_name, 
         account_number:  data.account_data.account_number,
         bank_id: data.account_data.bank_id,
@@ -222,12 +222,12 @@ eventsEmitter.on('create::tranferrecipient', <span class="fstat-no" title="funct
     //  get the customer to receive the payment
     const customer = <span class="cstat-no" title="statement not covered" >await db('customers').where({ customer_code: data.customer.customer_code}).first()</span>
     //  make deposit to user's account
-<span class="cstat-no" title="statement not covered" >    await db('wallets').insert({ user_id: customer.user_id, uuid: uuid(), amount: data.amount, reference: data.reference, status })</span>
+<span class="cstat-no" title="statement not covered" >    await db('wallets').insert({ user_id: customer.user_id, uuid: uuidv4(), amount: data.amount, reference: data.reference, status })</span>
 })
 &nbsp;
-eventsEmitter.on('transfer.success', <span class="fstat-no" title="function not covered" >async({</span>data})=&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >{</span></span>
+eventsEmitter.on('transfer.success', async({data})=&gt;{
     //  get the transaction and update its status
-    const tranx = <span class="cstat-no" title="statement not covered" >await db('wallets').where({'reference': data.reference}).update({ status })</span>
+    const tranx = await db('wallets').where({'reference': data.reference}).update({ status })
 })</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -235,7 +235,7 @@ eventsEmitter.on('transfer.success', <span class="fstat-no" title="function not 
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Fri Mar 11 2022 07:52:07 GMT+0100 (West Africa Standard Time)
+                at Sat Mar 12 2022 09:41:21 GMT+0100 (West Africa Standard Time)
             </div>
         <script src="../../prettify.js"></script>
         <script>
