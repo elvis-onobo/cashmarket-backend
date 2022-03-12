@@ -62,7 +62,7 @@ export default class WithdrawalsController {
     const [balance, account] = await Promise.all([balance$, account$])
 
     if (balance[0].balance < amountInKobo) {
-     return res.json({
+     return res.status(422).json({
       message: 'Insufficient funds',
      })
     }

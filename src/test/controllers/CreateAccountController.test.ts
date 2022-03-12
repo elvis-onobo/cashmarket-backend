@@ -25,7 +25,7 @@ describe('Create Account', function() {
         const response = await supertest(app).get('/create-account')
             .set('Authorization', 'Bearer ' + newUser[1].token)
 
-        // expect(response.status).toBe(200)
+        expect(response.status).toBe(200)
         expect(mockedAxios.post).toHaveBeenCalled()
     });
 });
