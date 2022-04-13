@@ -2,7 +2,7 @@ import amqplib from 'amqplib'
 const rabbit = amqplib.connect('amqp://localhost')
 import eventsEmitter from '../events/events'
 
-export default class RabbitMQ {
+export default class MessageQueue {
     /**
      * Initialize RabbitMQ
      */

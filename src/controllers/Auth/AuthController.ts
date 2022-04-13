@@ -15,6 +15,12 @@ export default class AuthController{
         return successHandler(200, 'Login successful', data, res)
     }
 
+    /**
+     * Sign up a user
+     * @param req 
+     * @param res 
+     * @returns 
+     */
     public static async signup(req: Request, res: Response){
         const data = await AuthService.signup(req.body)
         return successHandler(200, 'Registration successful', data, res)

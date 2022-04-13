@@ -1,6 +1,6 @@
 import supertest from 'supertest'
 import app from '../../../index'
-import RabbitMQ from '../../../config/rabbitmq'
+import RabbitMQ from '../../../config/messageQueue'
 import {newUser} from '../../fixtures/users'
 
 jest.mock('../../../config/rabbitmq')

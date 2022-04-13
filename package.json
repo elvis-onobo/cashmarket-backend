@@ -1,7 +1,7 @@
 {
   "name": "lendsqr",
   "version": "1.0.0",
-  "description": "an e-Wallet test",
+  "description": "Send money between apps",
   "main": "index.js",
   "author": "Elvis Onobo",
   "license": "MIT",

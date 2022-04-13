@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { v4 as uuidv4 } from 'uuid'
 import Paystack from '../config/axios-paystack'
 import db from '../database/db'
-import RabbitMQ from '../config/rabbitmq'
+import RabbitMQ from '../config/messageQueue'
 export default class WithdrawalsController {
  /**
   * Verifies a bank account and triggers transfer recipient creation
