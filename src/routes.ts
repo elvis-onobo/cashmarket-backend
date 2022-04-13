@@ -7,16 +7,15 @@ export default router
 import authMiddleware from './middleware/authMiddleware'
 // controllers
 import HealthCheck from './controllers/HealthCheckController'
-import LoginController from './controllers/Auth/LoginController'
-import SignUpController from './controllers/Auth/SignUpController'
+import AuthController from './controllers/Auth/AuthController'
 import CreateAccountController from './controllers/CreateAccountController'
 import WebhookController from './controllers/WebhookController'
 import InternalTransferController from './controllers/InternalTransferController'
 import WithdrawalsController from './controllers/WithdrawalsController'
 
 router.get('/healthcheck', HealthCheck.check)
-router.post('/login', LoginController.login)
-router.post('/signup', SignUpController.signup)
+router.post('/login', AuthController.login)
+router.post('/signup', AuthController.signup)
 router.post('/webhook', WebhookController.trigger)
 router.get('/create-account', authMiddleware, CreateAccountController.create)
 router.post('/transfer', authMiddleware, InternalTransferController.send)
