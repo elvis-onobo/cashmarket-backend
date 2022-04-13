@@ -29,7 +29,8 @@ export default class RabbitMQ {
 
     /**
      * Consume published data from a channel
-     * @param channel 
+     * @param channel channel to consume data from
+     * @param event associated event to be triggered
      */
     public static async consume(channel:string, event:string): Promise<void> {
         try {
