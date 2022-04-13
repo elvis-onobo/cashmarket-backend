@@ -16,9 +16,9 @@ describe('Authenticate User', function() {
                 password: newUser[0].password
             })
 
-        expect(response.status).toBe(200)
         expect(RabbitMQ.publish).toHaveBeenCalled()
         expect(RabbitMQ.consume).toHaveBeenCalled()
+        expect(response.status).toBe(200)
     });
 
     test('Should log in a user', async function() {

@@ -14,7 +14,7 @@ const res = {
 }
 
 describe('Withdrawal', function() {
-    test.only('should successfully process withdrawals', async function() {
+    test('should successfully process withdrawals', async function() {
         mockedAxios.post.mockResolvedValue({ data: res})
 
         const response = await supertest(app).post('/withdraw')
@@ -28,7 +28,7 @@ describe('Withdrawal', function() {
         expect(mockedAxios.post).toHaveBeenCalled()
     });
 
-    test.only('should respond if user has insufficient funds', async function() {
+    test('should respond if user has insufficient funds', async function() {
         mockedAxios.post.mockResolvedValue({ data: res})
 
         const response = await supertest(app).post('/withdraw')

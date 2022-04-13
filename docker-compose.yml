@@ -1,66 +1,66 @@
 version: '3.8'
 
 services:
-  lendsqr_mysql:
-    container_name: lendsqr_mysql
+  lynkarr_mysql:
+    container_name: lynkarr_mysql
     image: mysql:8.0
     command: --default-authentication-plugin=mysql_native_password
     restart: on-failure
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: lendsqr_mysql
+      MYSQL_DATABASE: lynkarr_mysql
       MYSQL_USER: u-user
       MYSQL_PASSWORD: p-password
     volumes:
-      - lendsqr_mysql:/var/lib/mysql
+      - lynkarr_mysql:/var/lib/mysql
     ports:
       - '3306:3306'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
-  lendsqr_redis:
-    container_name: lendsqr_redis
+  lynkarr_redis:
+    container_name: lynkarr_redis
     image: redis:6.2.6-alpine
     restart: on-failure
     environment:
       REDIS_PASSWORD:
     volumes:
-      - lendsqr_redis:/data
+      - lynkarr_redis:/data
     ports:
       - '6379:6379'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
-  lendsqr_phpmyadmin:
-    container_name: lendsqr_phpmyadmin
+  lynkarr_phpmyadmin:
+    container_name: lynkarr_phpmyadmin
     image: phpmyadmin
     restart: 'unless-stopped'
     environment:
-      VIRTUAL_HOST: phpmyadmin.lendsqr.localhost
+      VIRTUAL_HOST: phpmyadmin.lynkarr.localhost
       UPLOAD_LIMIT: 100M
       PMA_ARBITRARY: 1
-      PMA_HOST: lendsqr_mysql
+      PMA_HOST: lynkarr_mysql
       MYSQL_USER: root
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: password
     ports:
       - '8080:80'
     depends_on:
-      - lendsqr_mysql
+      - lynkarr_mysql
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
-  lendsqr_rabbitmq:
-    container_name: lendsqr_rabbitmq
+  lynkarr_rabbitmq:
+    container_name: lynkarr_rabbitmq
     image: 'rabbitmq:3.9.13-management'
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-    hostname: lendsqr_rabbitmq
+    hostname: lynkarr_rabbitmq
     ports:
       - '5672:5672'
       - '15672:15672'
 
 volumes:
-  lendsqr_mysql:
-  lendsqr_redis:
+  lynkarr_mysql:
+  lynkarr_redis:

@@ -4,7 +4,7 @@ import { ecryptedHeader } from '../fixtures/webhookEncryptedHeader'
 import { webhookPayload } from '../fixtures/webhookPayload'
 
 describe('Should be called when a webhook message is received', function() {
-    test.only('Should trigger data processing through queue service once data is received', async function() {
+    test('Should trigger data processing through queue service once data is received', async function() {
         const response = await supertest(app)
             .post('/webhook')
             .set('x-paystack-signature', ecryptedHeader.code)
