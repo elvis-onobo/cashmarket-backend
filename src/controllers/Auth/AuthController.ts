@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import AuthService from "../../services/Auth/AuthService";
 import successHandler from '../../helpers/successHandler';
-import { createUserValidator, loginUserValidator } from '../../validation/userValidator'
+import { createUserValidator, loginUserValidator, verifyEmailValidator } from '../../validation/userValidator'
 
 export default class AuthController{
     /**
@@ -28,7 +28,14 @@ export default class AuthController{
         return successHandler(200, 'Registration successful', data, res)
     }
 
-    public static async verifyEmail(){}
+    public static async verifyEmail(req: Request, res: Response){
+        await verifyEmailValidator.validateAsync(req.body)
+        console.log('>>>>>>>> ', req.body);
+        
+        const data = await AuthService.verifyEmail(req.body)
+        return successHandler(200, 'E-mail verified', data, res)    
+    }
+
     public static async forgotPassword(){}
     public static async updateProfile(){}
 }

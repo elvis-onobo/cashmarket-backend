@@ -10,3 +10,7 @@ export interface UserRegistrationInterface {
  phone: number
  password: string
 }
+
+export interface VerifyEmailInterface {
+    code: string
+}

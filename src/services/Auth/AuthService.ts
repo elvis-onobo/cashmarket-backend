@@ -4,7 +4,8 @@ import jsonwebtoken from 'jsonwebtoken'
 import { Unauthorized, InternalServerError, NotFound } from 'http-errors'
 import MessageQueue from '../../config/messageQueue'
 import CrudRepo from '../../repository/CrudRepo'
-import { UserLoginInterface, UserRegistrationInterface } from '../../interfaces/Auth/UserInterface'
+import randomCode from '../../helpers/randomCode'
+import { UserLoginInterface, UserRegistrationInterface, VerifyEmailInterface } from '../../interfaces/Auth/UserInterface'
 
 export default class AuthService {
  /**
@@ -12,8 +13,8 @@ export default class AuthService {
   * @param userData user's password and e-mail
   * @returns
   */
- public static async loginUser(userData: UserLoginInterface): Promise<object | string> {
-  const { email, password } = userData
+ public static async loginUser(payload: UserLoginInterface): Promise<object | string> {
+  const { email, password } = payload
 
   const user = await CrudRepo.fetchOneBy('users', 'email', email)
 
@@ -44,8 +45,8 @@ export default class AuthService {
   * @param userData
   * @returns
   */
- public static async signup(userData: UserRegistrationInterface): Promise<object> {
-  const { first_name, last_name, email, phone, password } = userData
+ public static async signup(payload: UserRegistrationInterface): Promise<object> {
+  const { first_name, last_name, email, phone, password } = payload
 
   const hashedPassword = await argon2.hash(password)
 
@@ -56,6 +57,7 @@ export default class AuthService {
    email,
    phone,
    password: hashedPassword,
+   code: randomCode()
   })
 
   const userInfo = await CrudRepo.fetchOneBy('users', 'id', user[0])
@@ -67,5 +69,24 @@ export default class AuthService {
   return {
    user: userInfo,
   }
+ }
+
+ public static async verifyEmail(payload:VerifyEmailInterface): Promise<string> {
+  // check db.user where code is equal the code being passed
+  const { code } = payload
+  const user = await CrudRepo.fetchOneBy('users', 'code', code)
+  
+  if (!user) {
+   throw new NotFound('User not found')
+  }
+
+  // update is_verified to true
+  CrudRepo.update('users', 'code', code, {
+    is_verified: true,
+    code: randomCode()
+  })
+
+  // return message
+  return 'E-mail verified'
  }
 }

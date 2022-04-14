@@ -11,6 +11,7 @@ export async function up(knex: Knex): Promise<void> {
         table.string('phone').notNullable().unique()
         table.string('password').notNullable()
         table.boolean('is_verified').notNullable().defaultTo(false)
+        table.string('code').notNullable()
         table.timestamps(true, true)
     })
 }

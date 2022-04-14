@@ -21,22 +21,22 @@ export default class CrudRepo {
      * @param value 
      * @returns 
      */
-    public static async fetchAll(table:string, row:any, value:any) {
+    public static async fetchAll(table:string, row:string, value:any) {
         return await db.select('*').from(table).where(row, value)
     }
     
     /**
      * Fetch an item by uuid from a table
      */
-    public static async fetchOneBy(table:string, row:any, value:any){
+    public static async fetchOneBy(table:string, row:string, value:any){
         return await db(table).where(row, value).first()
     }
 
-    public static async updateById(table:string, row:any, value:any, data:any){
+    public static async update(table:string, row:string, value:any, data:any){
         return await db(table).where(row, value).update(data)
     }
 
-    public static async deleteById(table:string, row:any, value:any) {
+    public static async deleteById(table:string, row:string, value:any) {
         return await db(table).where(row, value).delete()
     }
 }

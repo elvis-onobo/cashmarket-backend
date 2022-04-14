@@ -16,6 +16,7 @@ import WithdrawalsController from './controllers/WithdrawalsController'
 router.get('/healthcheck', HealthCheck.check)
 router.post('/login', AuthController.login)
 router.post('/signup', AuthController.signup)
+router.post('/verify-email', AuthController.verifyEmail)
 router.post('/webhook', WebhookController.trigger)
 router.get('/create-account', authMiddleware, CreateAccountController.create)
 router.post('/transfer', authMiddleware, InternalTransferController.send)
