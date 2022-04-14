@@ -17,6 +17,8 @@ router.get('/healthcheck', HealthCheck.check)
 router.post('/login', AuthController.login)
 router.post('/signup', AuthController.signup)
 router.post('/verify-email', AuthController.verifyEmail)
+router.patch('/update-profile', authMiddleware,AuthController.updateProfile)
+
 router.post('/webhook', WebhookController.trigger)
 router.get('/create-account', authMiddleware, CreateAccountController.create)
 router.post('/transfer', authMiddleware, InternalTransferController.send)

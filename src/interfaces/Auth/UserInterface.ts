@@ -14,3 +14,12 @@ export interface UserRegistrationInterface {
 export interface VerifyEmailInterface {
     code: string
 }
+
+export interface updateProfileInterface{
+    first_name: string
+    last_name: string
+    phone: number
+    oldPassword?: string
+    password: string
+    confirmPassword?: string
+}
