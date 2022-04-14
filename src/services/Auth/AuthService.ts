@@ -1,6 +1,7 @@
 import argon2 from 'argon2'
 import { v4 as uuidv4 } from 'uuid'
 import jsonwebtoken from 'jsonwebtoken'
+import { Unauthorized, InternalServerError, NotFound } from 'http-errors'
 import MessageQueue from '../../config/messageQueue'
 import CrudRepo from '../../repository/CrudRepo'
 import { UserLoginInterface, UserRegistrationInterface } from '../../interfaces/Auth/UserInterface'
@@ -8,7 +9,7 @@ import { UserLoginInterface, UserRegistrationInterface } from '../../interfaces/
 export default class AuthService {
  /**
   *
-  * @param userData user's passwors and e-mail
+  * @param userData user's password and e-mail
   * @returns
   */
  public static async loginUser(userData: UserLoginInterface): Promise<object | string> {
@@ -16,14 +17,18 @@ export default class AuthService {
 
   const user = await CrudRepo.fetchOneBy('users', 'email', email)
 
+  if (!user) {
+   throw new NotFound('E-mail does not exist')
+  }
+
   const passwordMatch = await argon2.verify(user.password, password)
 
   if (!passwordMatch) {
-   return 'Incorrect login credentials!'
+   throw new Unauthorized('Incorrect login credentials!')
   }
 
   if (!process.env.APP_KEY) {
-   return 'App key not found'
+   throw new InternalServerError('App key not found')
   }
 
   const token = jsonwebtoken.sign(user, process.env.APP_KEY)
@@ -39,7 +44,7 @@ export default class AuthService {
   * @param userData
   * @returns
   */
- public static async signup(userData: UserRegistrationInterface) {
+ public static async signup(userData: UserRegistrationInterface): Promise<object> {
   const { first_name, last_name, email, phone, password } = userData
 
   const hashedPassword = await argon2.hash(password)
@@ -60,7 +65,7 @@ export default class AuthService {
   await MessageQueue.publish('createUser', userInfo)
 
   return {
-   user,
+   user: userInfo,
   }
  }
 }

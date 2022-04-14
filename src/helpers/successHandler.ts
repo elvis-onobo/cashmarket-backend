@@ -9,7 +9,7 @@ import { Response } from 'express'
  * @param res 
  * @returns Object
  */
-export default function successHandler(status: number, message: string, data: any, res: Response): Object {
+export default function successHandler(status: number, message: string, data: any, res: Response): Response {
  return res.status(status).json({
   success: true,
   status,

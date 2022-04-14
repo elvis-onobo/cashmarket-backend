@@ -1,4 +1,4 @@
-import {Application} from 'express';
+import { Application } from 'express';
 import app from '../index'
 
 describe('Express App Setup', function() {
