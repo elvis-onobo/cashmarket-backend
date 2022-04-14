@@ -11,7 +11,7 @@ import {
  VerifyEmailInterface,
  updateProfileInterface,
 } from '../../interfaces/Auth/UserInterface'
-
+import sendMail from '../../helpers/sendEmail'
 export default class AuthService {
  /**
   *
@@ -115,5 +115,24 @@ export default class AuthService {
   const user = await CrudRepo.update('users', 'uuid', uuid, payload)
 
   return 'Profile updated'
+ }
+
+ /**
+  * send e-mail for a user to reset their password
+  * @param payload 
+  */
+ public static async sendPasswordResetlink(payload: { email: string}){
+  const { email } = payload
+
+  const user = await CrudRepo.fetchOneBy('users', 'email', email)
+
+  if(!user){
+    throw new NotFound('This e-mail does not exist in our system.')
+  }
+
+  // send e-mail
+  await sendMail()
+
+  return 'We have sent you an e-mail to reset your password.'
  }
 }

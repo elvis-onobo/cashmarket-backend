@@ -45,8 +45,28 @@ export default class AuthController {
   return successHandler(200, 'E-mail verified', data, res)
  }
 
- public static async forgotPassword() {}
+ /**
+  * Sends a mail for user to recover password
+  * @param req 
+  * @param res 
+  */
+ public static async sendPasswordResetlink(req: Request, res: Response) {}
 
+ /**
+  * Allows a user to set a new password
+  * @param req 
+  * @param res 
+  */
+ public static async resetPassword(req: Request, res: Response) {
+     
+ }
+
+ /**
+  * Updates a user profile
+  * @param req 
+  * @param res 
+  * @returns 
+  */
  public static async updateProfile(req: Request, res: Response) {
   await updateProfileValidator.validateAsync(req.body)
   const data = await AuthService.updateProfile(req.body, req.userInfo.uuid)
