@@ -23,3 +23,8 @@ export interface updateProfileInterface{
     password: string
     confirmPassword?: string
 }
+
+export interface resetPasswordInterface{
+    password: string
+    confirmPassword?: string
+}

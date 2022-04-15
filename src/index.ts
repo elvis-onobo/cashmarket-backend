@@ -1,14 +1,16 @@
 import 'express-async-errors'
 import 'dotenv/config'
 import express, {Application} from 'express'
-import router from './routes'
+import appRouter from './routes/appRoutes'
+import serviceRouter from './routes/serviceRoutes'
 import { errorMiddleware } from './middleware/errorMiddleware'
 
 const app:Application = express()
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(router)
+app.use('/api', appRouter)
+app.use(serviceRouter)
 app.use(errorMiddleware)
 
 export default app

@@ -25,3 +25,12 @@ export const updateProfileValidator = Joi.object({
   password: Joi.string().alphanum().required(),
   confirmPassword: Joi.string().alphanum().required()
 })
+
+export const sendPasswordResetLinkValidator = Joi.object({
+  email: Joi.string().required().email(),
+})
+
+export const resetPasswordValidator = Joi.object({
+  password: Joi.string().alphanum().required(),
+  confirmPassword: Joi.string().alphanum().required()
+})

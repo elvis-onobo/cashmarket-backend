@@ -6,6 +6,8 @@ import {
  loginUserValidator,
  verifyEmailValidator,
  updateProfileValidator,
+ sendPasswordResetLinkValidator,
+ resetPasswordValidator
 } from '../../validation/userValidator'
 
 export default class AuthController {
@@ -47,25 +49,31 @@ export default class AuthController {
 
  /**
   * Sends a mail for user to recover password
-  * @param req 
-  * @param res 
+  * @param req
+  * @param res
   */
- public static async sendPasswordResetlink(req: Request, res: Response) {}
+ public static async sendPasswordResetlink(req: Request, res: Response) {
+  await sendPasswordResetLinkValidator.validateAsync(req.body)
+  const data = await AuthService.sendPasswordResetlink(req.body)
+  return successHandler(200, 'Password reset link sent', data, res)
+ }
 
  /**
   * Allows a user to set a new password
-  * @param req 
-  * @param res 
+  * @param req
+  * @param res
   */
  public static async resetPassword(req: Request, res: Response) {
-     
+  await resetPasswordValidator.validateAsync(req.body)
+  const data = await AuthService.resetPassword(req.body, req.params.code)
+  return successHandler(200, 'Password reset successfully', data, res)
  }
 
  /**
   * Updates a user profile
-  * @param req 
-  * @param res 
-  * @returns 
+  * @param req
+  * @param res
+  * @returns
   */
  public static async updateProfile(req: Request, res: Response) {
   await updateProfileValidator.validateAsync(req.body)

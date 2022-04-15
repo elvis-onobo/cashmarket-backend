@@ -10,6 +10,7 @@ import {
  UserRegistrationInterface,
  VerifyEmailInterface,
  updateProfileInterface,
+ resetPasswordInterface
 } from '../../interfaces/Auth/UserInterface'
 import sendMail from '../../helpers/sendEmail'
 export default class AuthService {
@@ -100,7 +101,7 @@ export default class AuthService {
   return 'E-mail verified'
  }
 
- public static async updateProfile(payload: updateProfileInterface, uuid: string) {
+ public static async updateProfile(payload: updateProfileInterface, uuid: string): Promise<string> {
   const { password, confirmPassword } = payload
 
   if(password){
@@ -121,7 +122,7 @@ export default class AuthService {
   * send e-mail for a user to reset their password
   * @param payload 
   */
- public static async sendPasswordResetlink(payload: { email: string}){
+ public static async sendPasswordResetlink(payload: { email: string}): Promise<string>{
   const { email } = payload
 
   const user = await CrudRepo.fetchOneBy('users', 'email', email)
@@ -133,6 +134,31 @@ export default class AuthService {
   // send e-mail
   await sendMail()
 
-  return 'We have sent you an e-mail to reset your password.'
+  return 'We have sent you an e-mail. Use it to reset your password.'
+ }
+
+ /**
+  * Allows a user to change their password
+  * @param payload 
+  * @param uuid 
+  */
+ public static async resetPassword(payload:resetPasswordInterface, code:string): Promise<string>{
+  const { password, confirmPassword } = payload
+
+  if(password !== confirmPassword){
+    throw new UnprocessableEntity('Passwords do not match')
+  }
+  
+  const user = await CrudRepo.fetchOneBy('users', 'code', code)
+
+  if(!user){
+    throw new NotFound('User not found')
+  }
+
+  delete payload.confirmPassword
+
+  await CrudRepo.update('users', 'code', code, payload)
+
+  return 'Password reset successfully'
  }
 }
