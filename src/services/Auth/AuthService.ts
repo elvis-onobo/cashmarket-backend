@@ -2,9 +2,9 @@ import argon2 from 'argon2'
 import { v4 as uuidv4 } from 'uuid'
 import jsonwebtoken from 'jsonwebtoken'
 import { Unauthorized, InternalServerError, NotFound, UnprocessableEntity } from 'http-errors'
-import MessageQueue from '../../config/messageQueue'
 import CrudRepo from '../../repository/CrudRepo'
 import randomCode from '../../helpers/randomCode'
+import MessageQueue from '../../config/messageQueue'
 import {
  UserLoginInterface,
  UserRegistrationInterface,

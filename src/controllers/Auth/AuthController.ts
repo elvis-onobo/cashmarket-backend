@@ -7,8 +7,9 @@ import {
  verifyEmailValidator,
  updateProfileValidator,
  sendPasswordResetLinkValidator,
- resetPasswordValidator
+ resetPasswordValidator,
 } from '../../validation/userValidator'
+import { UnprocessableEntity } from 'http-errors'
 
 export default class AuthController {
  /**
@@ -64,8 +65,10 @@ export default class AuthController {
   * @param res
   */
  public static async resetPassword(req: Request, res: Response) {
+  const code = req.query.code as string
+  if (!code) throw new UnprocessableEntity('Verification code is required')
   await resetPasswordValidator.validateAsync(req.body)
-  const data = await AuthService.resetPassword(req.body, req.params.code)
+  const data = await AuthService.resetPassword(req.body, code)
   return successHandler(200, 'Password reset successfully', data, res)
  }
 
