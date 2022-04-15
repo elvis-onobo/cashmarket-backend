@@ -7,7 +7,7 @@ export default appRouter
 import authMiddleware from '../middleware/authMiddleware'
 // controllers
 import HealthCheck from '../controllers/HealthCheckController'
-import AuthController from '../controllers/Auth/AuthController'
+import AuthController from '../controllers/appControllers/Auth/AuthController'
 import CreateAccountController from '../controllers/CreateAccountController'
 import WebhookController from '../controllers/WebhookController'
 import InternalTransferController from '../controllers/InternalTransferController'

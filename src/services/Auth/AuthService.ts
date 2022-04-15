@@ -6,11 +6,12 @@ import CrudRepo from '../../repository/CrudRepo'
 import randomCode from '../../helpers/randomCode'
 import MessageQueue from '../../config/messageQueue'
 import {
+ UserModelInterface,
  UserLoginInterface,
  UserRegistrationInterface,
  VerifyEmailInterface,
  updateProfileInterface,
- resetPasswordInterface
+ resetPasswordInterface,
 } from '../../interfaces/Auth/UserInterface'
 import sendMail from '../../helpers/sendEmail'
 export default class AuthService {
@@ -22,7 +23,7 @@ export default class AuthService {
  public static async loginUser(payload: UserLoginInterface): Promise<object | string> {
   const { email, password } = payload
 
-  const user = await CrudRepo.fetchOneBy('users', 'email', email)
+  const user: UserModelInterface = await CrudRepo.fetchOneBy('users', 'email', email)
 
   if (!user) {
    throw new NotFound('E-mail does not exist')
@@ -104,10 +105,10 @@ export default class AuthService {
  public static async updateProfile(payload: updateProfileInterface, uuid: string): Promise<string> {
   const { password, confirmPassword } = payload
 
-  if(password){
-    if(password !== confirmPassword){
-      throw new UnprocessableEntity('Passwords do not match.')
-    }
+  if (password) {
+   if (password !== confirmPassword) {
+    throw new UnprocessableEntity('Passwords do not match.')
+   }
   }
 
   delete payload.confirmPassword
@@ -120,15 +121,15 @@ export default class AuthService {
 
  /**
   * send e-mail for a user to reset their password
-  * @param payload 
+  * @param payload
   */
- public static async sendPasswordResetlink(payload: { email: string}): Promise<string>{
+ public static async sendPasswordResetlink(payload: { email: string }): Promise<string> {
   const { email } = payload
 
   const user = await CrudRepo.fetchOneBy('users', 'email', email)
 
-  if(!user){
-    throw new NotFound('This e-mail does not exist in our system.')
+  if (!user) {
+   throw new NotFound('This e-mail does not exist in our system.')
   }
 
   // send e-mail
@@ -139,20 +140,20 @@ export default class AuthService {
 
  /**
   * Allows a user to change their password
-  * @param payload 
-  * @param uuid 
+  * @param payload
+  * @param uuid
   */
- public static async resetPassword(payload:resetPasswordInterface, code:string): Promise<string>{
+ public static async resetPassword(payload: resetPasswordInterface, code: string): Promise<string> {
   const { password, confirmPassword } = payload
 
-  if(password !== confirmPassword){
-    throw new UnprocessableEntity('Passwords do not match')
+  if (password !== confirmPassword) {
+   throw new UnprocessableEntity('Passwords do not match')
   }
-  
+
   const user = await CrudRepo.fetchOneBy('users', 'code', code)
 
-  if(!user){
-    throw new NotFound('User not found')
+  if (!user) {
+   throw new NotFound('User not found')
   }
 
   delete payload.confirmPassword

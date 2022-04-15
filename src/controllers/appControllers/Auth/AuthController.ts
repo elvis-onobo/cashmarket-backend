@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import AuthService from '../../services/Auth/AuthService'
-import successHandler from '../../helpers/successHandler'
+import AuthService from '../../../services/Auth/AuthService'
+import successHandler from '../../../helpers/successHandler'
 import {
  createUserValidator,
  loginUserValidator,
@@ -8,7 +8,7 @@ import {
  updateProfileValidator,
  sendPasswordResetLinkValidator,
  resetPasswordValidator,
-} from '../../validation/userValidator'
+} from '../../../validation/userValidator'
 import { UnprocessableEntity } from 'http-errors'
 
 export default class AuthController {
