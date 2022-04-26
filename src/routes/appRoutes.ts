@@ -23,7 +23,7 @@ appRouter.post('/sendPasswordResetlink', AuthController.sendPasswordResetlink)
 appRouter.post('/resetPassword', AuthController.resetPassword)
 appRouter.patch('/update-profile', authMiddleware, AuthController.updateProfile)
 // virtual accounts
-appRouter.post('/create-british-pounds-account', VirtualAccountsController.createGBPAccount)
+appRouter.post('/create-british-pounds-account', authMiddleware, VirtualAccountsController.createGBPAccount)
 
 // appRouter.post('/webhook', WebhookController.trigger)
 // appRouter.post('/transfer', authMiddleware, InternalTransferController.send)

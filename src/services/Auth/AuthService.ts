@@ -64,14 +64,14 @@ export default class AuthService {
    email,
    phone,
    password: hashedPassword,
-   code: randomCode(),
+   verification_code: randomCode(),
   })
 
   const userInfo: UserModelInterface = await CrudRepo.fetchOneBy('users', 'id', user[0])
 
-  await MessageQueue.consume('createUser', 'create::customer')
+//   await MessageQueue.consume('createUser', 'create::customer')
 
-  await MessageQueue.publish('createUser', userInfo)
+//   await MessageQueue.publish('createUser', userInfo)
 
   return {
    user: userInfo,
@@ -86,14 +86,14 @@ export default class AuthService {
  public static async verifyEmail(payload: VerifyEmailInterface): Promise<string> {
   // check db.user where code is equal the code being passed
   const { code } = payload
-  const user = await CrudRepo.fetchOneBy('users', 'code', code)
+  const user = await CrudRepo.fetchOneBy('users', 'verification_code', code)
 
   if (!user) {
    throw new NotFound('User not found')
   }
 
   // update is_verified to true
-  CrudRepo.update('users', 'code', code, {
+  CrudRepo.update('users', 'verification_code', code, {
    is_verified: true,
    code: randomCode(),
   })
@@ -156,7 +156,7 @@ export default class AuthService {
    throw new UnprocessableEntity('Passwords do not match')
   }
 
-  const user: UserModelInterface = await CrudRepo.fetchOneBy('users', 'code', code)
+  const user: UserModelInterface = await CrudRepo.fetchOneBy('users', 'verification_code', code)
 
   if (!user) {
    throw new NotFound('User not found')
