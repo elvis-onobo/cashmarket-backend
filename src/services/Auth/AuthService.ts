@@ -67,7 +67,7 @@ export default class AuthService {
    code: randomCode(),
   })
 
-  const userInfo = await CrudRepo.fetchOneBy('users', 'id', user[0])
+  const userInfo: UserModelInterface = await CrudRepo.fetchOneBy('users', 'id', user[0])
 
   await MessageQueue.consume('createUser', 'create::customer')
 
@@ -102,6 +102,12 @@ export default class AuthService {
   return 'E-mail verified'
  }
 
+ /**
+  * Updates a user's profile
+  * @param payload 
+  * @param uuid 
+  * @returns 
+  */
  public static async updateProfile(payload: updateProfileInterface, uuid: string): Promise<string> {
   const { password, confirmPassword } = payload
 
@@ -114,7 +120,7 @@ export default class AuthService {
   delete payload.confirmPassword
   delete payload.oldPassword
 
-  const user = await CrudRepo.update('users', 'uuid', uuid, payload)
+  await CrudRepo.update('users', 'uuid', uuid, payload)
 
   return 'Profile updated'
  }
@@ -126,7 +132,7 @@ export default class AuthService {
  public static async sendPasswordResetlink(payload: { email: string }): Promise<string> {
   const { email } = payload
 
-  const user = await CrudRepo.fetchOneBy('users', 'email', email)
+  const user: UserModelInterface = await CrudRepo.fetchOneBy('users', 'email', email)
 
   if (!user) {
    throw new NotFound('This e-mail does not exist in our system.')
@@ -150,7 +156,7 @@ export default class AuthService {
    throw new UnprocessableEntity('Passwords do not match')
   }
 
-  const user = await CrudRepo.fetchOneBy('users', 'code', code)
+  const user: UserModelInterface = await CrudRepo.fetchOneBy('users', 'code', code)
 
   if (!user) {
    throw new NotFound('User not found')

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import AuthService from '../../../services/Auth/AuthService'
-import successHandler from '../../../helpers/successHandler'
+import { successHandler } from '../../../helpers/successHandler'
 import {
  createUserValidator,
  loginUserValidator,
@@ -18,10 +18,10 @@ export default class AuthController {
   * @param res
   * @returns
   */
- public static async login(req: Request, res: Response): Promise<Response> {
+ public static async login(req: Request, res: Response) {
   await loginUserValidator.validateAsync(req.body)
   const data = await AuthService.loginUser(req.body)
-  return successHandler(200, 'Login successful', data, res)
+  return successHandler('Login successful', 200, data)(req, res)
  }
 
  /**
@@ -30,10 +30,10 @@ export default class AuthController {
   * @param res
   * @returns
   */
- public static async signup(req: Request, res: Response): Promise<Response> {
+ public static async signup(req: Request, res: Response) {
   await createUserValidator.validateAsync(req.body)
   const data = await AuthService.signup(req.body)
-  return successHandler(200, 'Registration successful', data, res)
+  return successHandler('Registration successful', 200, data)(req, res)
  }
 
  /**
@@ -45,7 +45,7 @@ export default class AuthController {
  public static async verifyEmail(req: Request, res: Response) {
   await verifyEmailValidator.validateAsync(req.body)
   const data = await AuthService.verifyEmail(req.body)
-  return successHandler(200, 'E-mail verified', data, res)
+  return successHandler('E-mail verified', 200, data)(req, res)
  }
 
  /**
@@ -56,7 +56,7 @@ export default class AuthController {
  public static async sendPasswordResetlink(req: Request, res: Response) {
   await sendPasswordResetLinkValidator.validateAsync(req.body)
   const data = await AuthService.sendPasswordResetlink(req.body)
-  return successHandler(200, 'Password reset link sent', data, res)
+  return successHandler('Password reset link sent', 200,  data)(req, res)
  }
 
  /**
@@ -69,7 +69,7 @@ export default class AuthController {
   if (!code) throw new UnprocessableEntity('Verification code is required')
   await resetPasswordValidator.validateAsync(req.body)
   const data = await AuthService.resetPassword(req.body, code)
-  return successHandler(200, 'Password reset successfully', data, res)
+  return successHandler('Password reset successfully', 200,  data)(req, res)
  }
 
  /**
@@ -81,6 +81,6 @@ export default class AuthController {
  public static async updateProfile(req: Request, res: Response) {
   await updateProfileValidator.validateAsync(req.body)
   const data = await AuthService.updateProfile(req.body, req.userInfo.uuid)
-  return successHandler(200, 'Profile updated', data, res)
+  return successHandler('Profile updated', 200, data)(req, res)
  }
 }
