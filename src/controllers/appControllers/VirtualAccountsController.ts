@@ -5,6 +5,16 @@ import { successHandler } from '../../helpers/successHandler'
 export default class VirtualAccountsController{
     public static async createGBPAccount(req: Request, res: Response){        
         const data = await VirtualAccountsService.createBritishPoundsAccount(req.body, req.userInfo.id)
-        return successHandler('Account creation in progress', 200, data)(req, res)
+        return successHandler('GBP Account creation in progress', 200, data)(req, res)
+    }
+
+    public static async createEuroAccount(req: Request, res: Response){
+        const data = await VirtualAccountsService.createEuroAccount(req.body, req.userInfo.id)
+        return successHandler('Euro Account creation in progress', 200, data)(req, res)
+    }
+
+    public static async createNairaAccount(req: Request, res: Response){
+        const data = await VirtualAccountsService.createNairaAccount(req.body, req.userInfo.id)
+        return successHandler('Naira Account creation in progress', 200, data)(req, res)
     }
 }

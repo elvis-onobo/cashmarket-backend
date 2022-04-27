@@ -24,7 +24,8 @@ appRouter.post('/resetPassword', AuthController.resetPassword)
 appRouter.patch('/update-profile', authMiddleware, AuthController.updateProfile)
 // virtual accounts
 appRouter.post('/create-british-pounds-account', authMiddleware, VirtualAccountsController.createGBPAccount)
-
+appRouter.post('/create-euro-account', authMiddleware, VirtualAccountsController.createEuroAccount)
+appRouter.post('/create-naira-account', authMiddleware, VirtualAccountsController.createNairaAccount)
 // appRouter.post('/webhook', WebhookController.trigger)
 // appRouter.post('/transfer', authMiddleware, InternalTransferController.send)
 // appRouter.post('/verify-account', authMiddleware, WithdrawalsController.verifyAccount)
