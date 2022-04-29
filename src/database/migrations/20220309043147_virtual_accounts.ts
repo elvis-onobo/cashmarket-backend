@@ -2,7 +2,7 @@ import { Knex } from "knex";
 
 
 export async function up(knex: Knex): Promise<void> {
-    return knex.schema.createTable('naira_virtual_accounts', (table: Knex.TableBuilder) => {
+    return knex.schema.createTable('virtual_accounts', (table: Knex.TableBuilder) => {
         table.increments('id', { primaryKey: true })
         table.uuid('uuid').notNullable().unique()
         table.integer('user_id').references('id').inTable('users').notNullable().unsigned()
@@ -12,14 +12,19 @@ export async function up(knex: Knex): Promise<void> {
         table.string('status').notNullable()
         table.string('account_type').notNullable()
         table.string('bank_name').nullable()
+        table.string('iban').nullable()
         table.string('account_name').nullable()
         table.string('account_number').nullable()
+        table.string('check_number').nullable()
+        table.string('sort_code').nullable()
+        table.string('bank_swift_code').nullable()
+        table.string('bank_code').nullable()
+        table.string('country_code').nullable()
         table.timestamps(true, true)
     })
 }
 
-
 export async function down(knex: Knex): Promise<void> {
-    return knex.schema.dropTable("naira_virtual_accounts")
+    return knex.schema.dropTable("virtual_accounts")
 }
 

@@ -6,7 +6,7 @@ export async function up(knex: Knex): Promise<void> {
         table.increments('id')
         table.uuid('uuid').notNullable().unique()
         table.integer('user_id').references('id').inTable('users').notNullable().unsigned()
-        table.integer('fincra_virtual_account_id').references('id').inTable('users').notNullable().unsigned()
+        table.uuid('fincra_virtual_account_id').references('fincra_virtual_account_id').inTable('virtual_accounts')
         table.decimal('source_amount', 12,2).notNullable()
         table.decimal('destination_amount', 12,2).notNullable()
         table.decimal('amount_received', 12,2).notNullable()

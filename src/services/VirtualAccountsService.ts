@@ -45,7 +45,7 @@ export default class VirtualAccountsService{
         const data = res.data.data
 
         // save the account information against the user id in db
-        const account = await CrudRepo.create('gbp_virtual_accounts', {
+        const account = await CrudRepo.create('virtual_accounts', {
             uuid: uuidv4(),
             user_id: userId, 
             fincra_virtual_account_id: data._id,
@@ -93,7 +93,7 @@ export default class VirtualAccountsService{
         const data = res.data.data
 
         // save the account information against the user id in db
-        const account = await CrudRepo.create('euro_virtual_accounts', {
+        const account = await CrudRepo.create('virtual_accounts', {
             uuid: uuidv4(),
             user_id: userId, 
             fincra_virtual_account_id: data._id,
@@ -123,7 +123,7 @@ export default class VirtualAccountsService{
         const data = res.data.data
         
         // save the account information against the user id in db
-        const account = await CrudRepo.create('naira_virtual_accounts', {
+        const account = await CrudRepo.create('virtual_accounts', {
             uuid: uuidv4(),
             user_id: userId, 
             fincra_virtual_account_id: data._id,
