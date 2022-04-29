@@ -11,7 +11,7 @@ import AuthController from '../controllers/appControllers/Auth/AuthController'
 import VirtualAccountsController from '../controllers/appControllers/VirtualAccountsController'
 
 
-// import WebhookController from '../controllers/WebhookController'
+import WebhookController from '../controllers/appControllers/WebhookController'
 // import InternalTransferController from '../controllers/InternalTransferController'
 // import WithdrawalsController from '../controllers/WithdrawalsController'
 
@@ -26,7 +26,7 @@ appRouter.patch('/update-profile', authMiddleware, AuthController.updateProfile)
 appRouter.post('/create-british-pounds-account', authMiddleware, VirtualAccountsController.createGBPAccount)
 appRouter.post('/create-euro-account', authMiddleware, VirtualAccountsController.createEuroAccount)
 appRouter.post('/create-naira-account', authMiddleware, VirtualAccountsController.createNairaAccount)
-// appRouter.post('/webhook', WebhookController.trigger)
+appRouter.post('/webhook', WebhookController.trigger)
 // appRouter.post('/transfer', authMiddleware, InternalTransferController.send)
 // appRouter.post('/verify-account', authMiddleware, WithdrawalsController.verifyAccount)
 // appRouter.post('/withdraw', authMiddleware, WithdrawalsController.withdraw)

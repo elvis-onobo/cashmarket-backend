@@ -11,6 +11,7 @@ export async function up(knex: Knex): Promise<void> {
         table.decimal('destination_amount', 12,2).notNullable()
         table.decimal('amount_received', 12,2).notNullable()
         table.decimal('fee', 12,2).notNullable()
+        table.string('customer_name').notNullable()
         table.string('reference').notNullable()
         table.string('status').notNullable()
         table.string('source_currency').notNullable()
@@ -19,7 +20,6 @@ export async function up(knex: Knex): Promise<void> {
         table.timestamps(true, true)
     })
 }
-
 
 export async function down(knex: Knex): Promise<void> {
     return knex.schema.dropTable("wallets")
