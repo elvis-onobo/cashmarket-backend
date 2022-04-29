@@ -1,7 +1,6 @@
 import crypto from 'crypto'
 import dotenv from 'dotenv'
 dotenv.config({ path: '../../.env' })
-import eventsEmitter from '../events/events'
 import { InternalServerError } from 'http-errors'
 import MessageQueue from '../config/messageQueue'
 export default class WebhookService {

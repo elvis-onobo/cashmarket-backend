@@ -5,9 +5,7 @@ import {
 } from '../interfaces/VirtualAccountsInterface'
 import CrudRepo from '../repository/CrudRepo'
 
-const entityName = 'DigitalBoss Africa'
 const accountType = 'individual'
-const reason = 'Receive payments'
 const accountCreationURL = '/profile/virtual-accounts/requests'
 
 export default class VirtualAccountsService{
@@ -15,9 +13,7 @@ export default class VirtualAccountsService{
         const res = await Fincra.post(accountCreationURL, { 
             currency: 'GBP',
             accountType,
-            // meansofId: payload.meansofId,
             utilityBill: payload.utilityBill,
-            // attachments: payload.attachments,
             KYCInformation: {
                 firstName: payload.KYCInformation.firstName,
                 lastName: payload.KYCInformation.lastName,
@@ -125,7 +121,7 @@ export default class VirtualAccountsService{
         // save the account information against the user id in db
         const account = await CrudRepo.create('virtual_accounts', {
             uuid: uuidv4(),
-            user_id: userId, 
+            user_id: userId,
             fincra_virtual_account_id: data._id,
             currency: data.currency,
             currency_type: data.currencyType,
@@ -135,7 +131,6 @@ export default class VirtualAccountsService{
             account_number: data.accountInformation.accountNumber,
             account_name: data.accountInformation.accountName,
         })
-
 
         return data
     }
