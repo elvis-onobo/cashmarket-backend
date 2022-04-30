@@ -1,24 +1,47 @@
 import { v4 as uuidv4 } from 'uuid'
 import db from '../database/db'
 import CrudRepo from '../repository/CrudRepo'
-import { ConvertFundsInterface } from '../interfaces/TransactionsInterface'
+import {
+ ConvertFundsInterface,
+ NairaWithdrawalInterface,
+} from '../interfaces/TransactionsInterface'
 import { NotFound, UnprocessableEntity } from 'http-errors'
 import { statusEnum } from '../Enums/StatusEnum'
+import { accountTypeEnum } from '../Enums/AccountTypeEnum'
+import { CurrencyEnum } from '../Enums/CurrencyEnum'
 import { settlementDestination } from '../Enums/SettlementDestinationsEnum'
 import MessageQueue from '../config/messageQueue'
+import Fincra from '../config/axios-fincra'
+
+const businessId = process.env.FINCRA_BUSINESS_ID
 
 export default class TransactionsService {
+ /**
+  * Returns the balance in a user's account
+  * @param currency the currency of the account to search
+  * @param userId the id of the user to search for
+  * @returns
+  */
  public static async getBalance(currency: string, userId: number) {
   return await CrudRepo.getSum('wallets', 'amount_received', 'balance', {
    user_id: userId,
-   destination_currency: currency,
+   currency: currency,
   })
  }
 
+ /**
+  * Query AbokiFX and return the parallel market exchange rates
+  * @returns
+  */
  public static async conversionRate() {
   return 589
  }
 
+ /**
+  * Converts one currency to another
+  * @param payload
+  * @param userId
+  */
  public static async convertFunds(payload: ConvertFundsInterface, userId: number) {
   const { source_currency, destination_currency, source_amount, account_to_pay } = payload
   const sourceAmount = Number(source_amount)
@@ -43,7 +66,7 @@ export default class TransactionsService {
    const [balance, sourceAccount] = await Promise.all([balance$, sourceAccount$])
 
    if (!balance || balance === [] || balance === undefined) {
-    throw new UnprocessableEntity('Insufficient balance')
+    throw new UnprocessableEntity('Insufficient funds')
    }
 
    if (!sourceAccount || sourceAccount === [] || sourceAccount === undefined) {
@@ -51,7 +74,7 @@ export default class TransactionsService {
    }
 
    if (balance[0].balance < sourceAmount) {
-    throw new UnprocessableEntity('Insufficient balance')
+    throw new UnprocessableEntity('Insufficient funds')
    }
 
    const conversionRate: number = await this.conversionRate()
@@ -131,12 +154,24 @@ export default class TransactionsService {
   })
  }
 
- public static async listTransactions(userId: number, page:number) {
+ /**
+  * List transactions
+  * @param userId
+  * @param page
+  * @returns
+  */
+ public static async listTransactions(userId: number, page: number) {
   const transactions = await CrudRepo.fetchAllandPaginate('wallets', 'user_id', userId, 20, page)
   return transactions
  }
 
- public static async searchTransactions(payload: { search: string }, page:number) {
+ /**
+  * Search transaction by amount, reference, currency
+  * @param payload
+  * @param page
+  * @returns
+  */
+ public static async searchTransactions(payload: { search: string }, page: number) {
   const { search } = payload
   const transactions = await CrudRepo.search(
    'wallets',
@@ -144,9 +179,62 @@ export default class TransactionsService {
    'reference',
    'amount_received',
    'currency',
-   page, 2
+   page
   )
 
   return transactions
+ }
+
+ /**
+  * Withdraw Naira to bank account
+  * @param payload 
+  * @param userId 
+  */
+ public static async withdrawNaira(payload: NairaWithdrawalInterface, userId: number) {
+  const balance = await this.getBalance(CurrencyEnum.NGN, userId)
+
+  if(balance[0].balance < payload.amount){
+    throw new UnprocessableEntity('Insufficient funds')
+  }
+
+  const bankAccount = await CrudRepo.fetchOneBy('bank_accounts', 'uuid', payload.bank_account_uuid)
+
+  const res = await Fincra.post('/disbursements/payouts/', {
+   sourceCurrency: CurrencyEnum.NGN,
+   destinationCurrency: CurrencyEnum.NGN,
+   amount: payload.amount,
+   business: businessId,
+   description: 'Withdrawal transaction',
+   customerReference: uuidv4(),
+   beneficiary: {
+    lastName: bankAccount.customer_name,
+    firstName: bankAccount.customer_name,
+    accountNumber: bankAccount.account_number,
+    accountHolderName: bankAccount.customer_name,
+    type: accountTypeEnum.INDIVIDUAL,
+    bankCode: bankAccount.bank_code,
+   },
+   paymentDestination: settlementDestination.BANK_ACCOUNT,
+  })
+
+  const fee = 10 // TODO: write a function to calculate fees
+  
+  if(res.data.success === true) {
+    await CrudRepo.create('wallets', {
+      uuid: uuidv4(),
+     user_id: userId,
+     amount_received: -payload.amount,
+     customer_name: bankAccount.customer_name,
+     reference: res.data.data.reference,
+     status: statusEnum.PROCESSING,
+     currency: CurrencyEnum.NGN,
+     settlement_destination: settlementDestination.BANK_ACCOUNT,
+     settlement_account_number: bankAccount.account_number,
+     settlement_account_bank: bankAccount.bank_code,
+     fee
+    })
+  }
+
+  return 'Processing Withdrawal'
  }
 }

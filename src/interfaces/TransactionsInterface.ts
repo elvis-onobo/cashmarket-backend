@@ -5,3 +5,9 @@ export interface ConvertFundsInterface{
     destination_amount: number
     account_to_pay: string
 }
+
+export interface NairaWithdrawalInterface{
+    amount: number
+    purpose: string
+    bank_account_uuid: string
+}

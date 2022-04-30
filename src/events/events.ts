@@ -77,23 +77,23 @@ eventsEmitter.on('payout.failed', async ({ data }) => {
 
 // LOCAL EVENTS
 eventsEmitter.on('payout::funds', async (data) => {
-//  const res = await Fincra.post('/disbursements/payouts/', {
-//   sourceCurrency: data.destination_currency,
-//   destinationCurrency: data.destination_currency,
-//   amount: data.amount_received,
-//   business: businessId,
-//   description: 'Conversion transaction',
-//   customerReference: uuidv4(),
-//   beneficiary: {
-//    lastName: data.customer_name,
-//    firstName: data.customer_name,
-//    accountNumber: data.settlement_account_number,
-//    accountHolderName: data.customer_name,
-//    type: accountTypeEnum.INDIVIDUAL,
-//    bankCode: data.settlement_account_bank,
-//   },
-//   paymentDestination: settlementDestination.BANK_ACCOUNT,
-//  })
+ const res = await Fincra.post('/disbursements/payouts/', {
+  sourceCurrency: data.destination_currency,
+  destinationCurrency: data.destination_currency,
+  amount: data.amount_received,
+  business: businessId,
+  description: 'Conversion transaction',
+  customerReference: uuidv4(),
+  beneficiary: {
+   lastName: data.customer_name,
+   firstName: data.customer_name,
+   accountNumber: data.settlement_account_number,
+   accountHolderName: data.customer_name,
+   type: accountTypeEnum.INDIVIDUAL,
+   bankCode: data.settlement_account_bank,
+  },
+  paymentDestination: settlementDestination.BANK_ACCOUNT,
+ })
 
  await CrudRepo.create('wallets', {
   uuid: uuidv4(),

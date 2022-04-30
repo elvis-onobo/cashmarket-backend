@@ -8,7 +8,9 @@ export default class VirtualAccountsController{
         return successHandler('Fund Conversion Successful', 200, data)(req, res)
     }
     
-    public static async withdraw(req: Request, res: Response){        
+    public static async withdrawNaira(req: Request, res: Response){        
+        const data = await TransactionsService.withdrawNaira(req.body, req.userInfo.id)
+        return successHandler('Processing Withdrawal', 200, data)(req, res)
     }
 
     public static async listTransactions(req: Request, res: Response){

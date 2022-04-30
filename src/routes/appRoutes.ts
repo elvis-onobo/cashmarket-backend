@@ -30,5 +30,6 @@ appRouter.post('/verify-bank-account', authMiddleware, BankAccountController.ver
 appRouter.post('/convert-funds', authMiddleware, TransactionsController.convertFunds)
 appRouter.post('/search', authMiddleware, TransactionsController.searchTransactions)
 appRouter.get('/list-transactions', authMiddleware, TransactionsController.listTransactions)
+appRouter.post('/withdraw-naira', authMiddleware, TransactionsController.withdrawNaira)
 // Webhook
 appRouter.post('/webhook', WebhookController.trigger)
