@@ -38,6 +38,30 @@ export default class TransactionsService {
  }
 
  /**
+  * Fee for converting currency
+  * @param amount 
+  * @returns 
+  */
+ public static async calculateFee(amount:number){
+   const fee = 0.02 * amount 
+  return fee
+ }
+
+ public static async calculateNairaWithdrawalFee(amount:number){
+  if(amount < 10000){
+    return 20
+  }
+
+  if(amount > 10000 && amount < 10000){
+    return 31
+  }
+
+  if(amount > 50000){
+    return 50
+  }
+ }
+
+ /**
   * Converts one currency to another
   * @param payload
   * @param userId
@@ -45,6 +69,7 @@ export default class TransactionsService {
  public static async convertFunds(payload: ConvertFundsInterface, userId: number) {
   const { source_currency, destination_currency, source_amount, account_to_pay } = payload
   const sourceAmount = Number(source_amount)
+  const fee = await this.calculateFee(sourceAmount)
 
   await db.transaction(async (trx) => {
    // get the balance of the account sending the money
@@ -217,7 +242,8 @@ export default class TransactionsService {
    paymentDestination: settlementDestination.BANK_ACCOUNT,
   })
 
-  const fee = 10 // TODO: write a function to calculate fees
+  const fee = await this.calculateNairaWithdrawalFee(payload.amount)
+  console.log('>>>>>> ', fee);
   
   if(res.data.success === true) {
     await CrudRepo.create('wallets', {
