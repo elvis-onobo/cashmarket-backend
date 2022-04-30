@@ -4,6 +4,7 @@ import {
     CreateVirtualAccountInterface 
 } from '../interfaces/VirtualAccountsInterface'
 import CrudRepo from '../repository/CrudRepo'
+import { accountTypeEnum } from '../Enums/AccountTypeEnum'
 
 const accountType = 'individual'
 const accountCreationURL = '/profile/virtual-accounts/requests'
