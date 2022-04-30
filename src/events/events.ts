@@ -47,15 +47,12 @@ eventsEmitter.on('collection.successful', async ({ data }) => {
   uuid: uuidv4(),
   user_id: recipientAccount.user_id,
   fincra_virtual_account_id: data.virtualAccount,
-  source_amount: data.sourceAmount,
-  destination_amount: data.destinationAmount,
   amount_received: data.amountReceived,
   fee: data.fee,
   customer_name: data.customerName,
   reference: data.reference,
   status: data.status,
-  source_currency: data.sourceCurrency,
-  destination_currency: data.destinationCurrency,
+  currency: data.destinationCurrency,
   settlement_destination: data.settlementDestination,
  })
 })
@@ -80,29 +77,27 @@ eventsEmitter.on('payout.failed', async ({ data }) => {
 
 // LOCAL EVENTS
 eventsEmitter.on('payout::funds', async (data) => {
- const res = await Fincra.post('/disbursements/payouts/', {
-  sourceCurrency: data.destination_currency,
-  destinationCurrency: data.destination_currency,
-  amount: data.amount_received,
-  business: businessId,
-  description: 'Conversion transaction',
-  customerReference: uuidv4(),
-  beneficiary: {
-   lastName: data.customer_name,
-   firstName: data.customer_name,
-   accountNumber: data.settlement_account_number,
-   accountHolderName: data.customer_name,
-   type: accountTypeEnum.INDIVIDUAL,
-   bankCode: data.settlement_account_bank,
-  },
-  paymentDestination: settlementDestination.BANK_ACCOUNT,
- })
+//  const res = await Fincra.post('/disbursements/payouts/', {
+//   sourceCurrency: data.destination_currency,
+//   destinationCurrency: data.destination_currency,
+//   amount: data.amount_received,
+//   business: businessId,
+//   description: 'Conversion transaction',
+//   customerReference: uuidv4(),
+//   beneficiary: {
+//    lastName: data.customer_name,
+//    firstName: data.customer_name,
+//    accountNumber: data.settlement_account_number,
+//    accountHolderName: data.customer_name,
+//    type: accountTypeEnum.INDIVIDUAL,
+//    bankCode: data.settlement_account_bank,
+//   },
+//   paymentDestination: settlementDestination.BANK_ACCOUNT,
+//  })
 
  await CrudRepo.create('wallets', {
   uuid: uuidv4(),
   user_id: data.user_id,
-  source_amount: data.source_amount,
-  destination_amount: data.destination_amount,
   amount_received: data.amount_received,
   customer_name: data.customer_name,
   reference: uuidv4(),
@@ -110,8 +105,7 @@ eventsEmitter.on('payout::funds', async (data) => {
   settlement_destination: settlementDestination.BANK_ACCOUNT,
   settlement_account_number: data.settlement_account_number,
   settlement_account_bank: data.settlement_account_bank,
-  source_currency: data.source_currency,
-  destination_currency: data.destination_currency,
+  currency: data.currency,
   fee: data.fee,
  })
 })

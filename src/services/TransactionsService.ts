@@ -30,7 +30,7 @@ export default class TransactionsService {
     .where({
      status: statusEnum.SUCCESS,
      user_id: userId,
-     destination_currency: source_currency,
+     currency: source_currency,
     })
     .sum('amount_received as balance')
 
@@ -64,15 +64,12 @@ export default class TransactionsService {
     uuid: uuidv4(),
     user_id: userId,
     fincra_virtual_account_id: sourceAccount[0].fincra_virtual_account_id,
-    source_amount: -sourceAmount,
-    destination_amount: -amountConvertedToNewCurrency,
     amount_received: -sourceAmount + -fee,
     customer_name: sourceAccount[0].account_name,
     reference: uuidv4(),
     status: statusEnum.SUCCESS,
-    settlement_destination: settlementDestination.BANK_ACCOUNT,
-    source_currency,
-    destination_currency: source_currency,
+    settlement_destination: account_to_pay === settlementDestination.BANK_ACCOUNT ? settlementDestination.BANK_ACCOUNT : settlementDestination.VIRTUAL_ACCOUNT,
+    currency: source_currency,
     fee,
    })
 
@@ -93,16 +90,13 @@ export default class TransactionsService {
     await trx('wallets').insert({
      uuid: uuidv4(),
      user_id: userId,
-     source_amount: sourceAmount,
      fincra_virtual_account_id: destinationVirtualAccount.fincra_virtual_account_id,
-     destination_amount: amountConvertedToNewCurrency,
      customer_name: destinationVirtualAccount.account_name,
      amount_received: amountReceived,
      reference: uuidv4(),
      status: statusEnum.SUCCESS,
      settlement_destination: settlementDestination.VIRTUAL_ACCOUNT,
-     source_currency,
-     destination_currency,
+     currency: destination_currency,
      fee,
     })
    } else {
@@ -114,8 +108,6 @@ export default class TransactionsService {
 
     const payoutToBankAccountData = {
      user_id: userId,
-     source_amount: sourceAmount,
-     destination_amount: amountConvertedToNewCurrency,
      amount_received: amountReceived,
      customer_name: recipientAccount.customer_name,
      reference: uuidv4(),
@@ -123,8 +115,7 @@ export default class TransactionsService {
      settlement_destination: settlementDestination.BANK_ACCOUNT,
      settlement_account_number: recipientAccount.account_number,
      settlement_account_bank: recipientAccount.bank_code,
-     source_currency,
-     destination_currency,
+     currency: destination_currency,
      fee,
     }
 
