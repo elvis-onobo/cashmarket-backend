@@ -72,6 +72,12 @@ eventsEmitter.on('payout.successful', async ({ data }) => {
  })
 })
 
+eventsEmitter.on('payout.failed', async ({ data }) => {
+ await CrudRepo.update('wallets', 'reference', data.reference, {
+  status: data.status,
+ })
+})
+
 // LOCAL EVENTS
 eventsEmitter.on('payout::funds', async (data) => {
  const res = await Fincra.post('/disbursements/payouts/', {

@@ -60,18 +60,19 @@ export default class TransactionsService {
    const amountReceived = amountConvertedToNewCurrency - fee
 
    // deduct source amount from source account
-   trx('wallets').insert({
+   await trx('wallets').insert({
+    uuid: uuidv4(),
     user_id: userId,
     fincra_virtual_account_id: sourceAccount[0].fincra_virtual_account_id,
-    source_amount: sourceAmount,
-    destination_amount: amountConvertedToNewCurrency,
-    amount_received: -amountReceived,
-    customer_name: sourceAccount[0].customer_name,
+    source_amount: -sourceAmount,
+    destination_amount: -amountConvertedToNewCurrency,
+    amount_received: -sourceAmount + -fee,
+    customer_name: sourceAccount[0].account_name,
     reference: uuidv4(),
     status: statusEnum.SUCCESS,
     settlement_destination: settlementDestination.BANK_ACCOUNT,
     source_currency,
-    destination_currency,
+    destination_currency: source_currency,
     fee,
    })
 
@@ -90,7 +91,7 @@ export default class TransactionsService {
 
     // add converted amount to destination account
     await trx('wallets').insert({
-    uuid: uuidv4(),
+     uuid: uuidv4(),
      user_id: userId,
      source_amount: sourceAmount,
      fincra_virtual_account_id: destinationVirtualAccount.fincra_virtual_account_id,
