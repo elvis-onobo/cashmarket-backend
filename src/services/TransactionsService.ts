@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 import db from '../database/db'
 import CrudRepo from '../repository/CrudRepo'
 import { ConvertFundsInterface } from '../interfaces/TransactionsInterface'
-import { Unauthorized, InternalServerError, NotFound, UnprocessableEntity } from 'http-errors'
+import { NotFound, UnprocessableEntity } from 'http-errors'
 import { statusEnum } from '../Enums/StatusEnum'
 import { settlementDestination } from '../Enums/SettlementDestinationsEnum'
 import MessageQueue from '../config/messageQueue'
@@ -68,7 +68,10 @@ export default class TransactionsService {
     customer_name: sourceAccount[0].account_name,
     reference: uuidv4(),
     status: statusEnum.SUCCESS,
-    settlement_destination: account_to_pay === settlementDestination.BANK_ACCOUNT ? settlementDestination.BANK_ACCOUNT : settlementDestination.VIRTUAL_ACCOUNT,
+    settlement_destination:
+     account_to_pay === settlementDestination.BANK_ACCOUNT
+      ? settlementDestination.BANK_ACCOUNT
+      : settlementDestination.VIRTUAL_ACCOUNT,
     currency: source_currency,
     fee,
    })
@@ -126,5 +129,24 @@ export default class TransactionsService {
 
    return 'Your transaction is processing.'
   })
+ }
+
+ public static async listTransactions(userId: number, page:number) {
+  const transactions = await CrudRepo.fetchAllandPaginate('wallets', 'user_id', userId, 20, page)
+  return transactions
+ }
+
+ public static async searchTransactions(payload: { search: string }, page:number) {
+  const { search } = payload
+  const transactions = await CrudRepo.search(
+   'wallets',
+   search,
+   'reference',
+   'amount_received',
+   'currency',
+   page, 2
+  )
+
+  return transactions
  }
 }

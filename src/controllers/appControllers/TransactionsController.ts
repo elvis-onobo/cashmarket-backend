@@ -12,8 +12,14 @@ export default class VirtualAccountsController{
     }
 
     public static async listTransactions(req: Request, res: Response){
+        const page = req.query.page as unknown as number
+        const data = await TransactionsService.listTransactions(req.userInfo.id, page)
+        return successHandler('Transactions Fetched Successful', 200, data)(req, res)
     }
     
     public static async searchTransactions(req: Request, res: Response){
+        const page = req.query.page as unknown as number
+        const data = await TransactionsService.searchTransactions(req.body, page)
+        return successHandler('Search Successful', 200, data)(req, res)
     }
 }

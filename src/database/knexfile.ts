@@ -1,5 +1,7 @@
 import dotenv from 'dotenv'
 import type { Knex } from "knex";
+import { attachPaginate } from 'knex-paginate'
+attachPaginate()
 
 dotenv.config({ path: '../../.env' })
 

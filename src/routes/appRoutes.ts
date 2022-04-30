@@ -28,5 +28,7 @@ appRouter.post('/create-euro-account', authMiddleware, VirtualAccountsController
 appRouter.post('/create-naira-account', authMiddleware, VirtualAccountsController.createNairaAccount)
 appRouter.post('/verify-bank-account', authMiddleware, BankAccountController.verifyAccount)
 appRouter.post('/convert-funds', authMiddleware, TransactionsController.convertFunds)
+appRouter.post('/search', authMiddleware, TransactionsController.searchTransactions)
+appRouter.get('/list-transactions', authMiddleware, TransactionsController.listTransactions)
 // Webhook
 appRouter.post('/webhook', WebhookController.trigger)
