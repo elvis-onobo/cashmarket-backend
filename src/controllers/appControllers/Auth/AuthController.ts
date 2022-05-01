@@ -21,7 +21,7 @@ export default class AuthController {
  public static async login(req: Request, res: Response) {
   await loginUserValidator.validateAsync(req.body)
   const data = await AuthService.loginUser(req.body)
-  return successHandler('Login successful', 200, data)(req, res)
+  return successHandler('Login Successful', 200, data)(req, res)
  }
 
  /**
@@ -33,7 +33,7 @@ export default class AuthController {
  public static async signup(req: Request, res: Response) {
   await createUserValidator.validateAsync(req.body)
   const data = await AuthService.signup(req.body)
-  return successHandler('Registration successful', 200, data)(req, res)
+  return successHandler('Registration Successful', 200, data)(req, res)
  }
 
  /**
@@ -45,7 +45,7 @@ export default class AuthController {
  public static async verifyEmail(req: Request, res: Response) {
   await verifyEmailValidator.validateAsync(req.body)
   const data = await AuthService.verifyEmail(req.body)
-  return successHandler('E-mail verified', 200, data)(req, res)
+  return successHandler('E-mail Verified', 200, data)(req, res)
  }
 
  /**
@@ -56,7 +56,7 @@ export default class AuthController {
  public static async sendPasswordResetlink(req: Request, res: Response) {
   await sendPasswordResetLinkValidator.validateAsync(req.body)
   const data = await AuthService.sendPasswordResetlink(req.body)
-  return successHandler('Password reset link sent', 200,  data)(req, res)
+  return successHandler('Password Reset Link Sent', 200, data)(req, res)
  }
 
  /**
@@ -69,7 +69,7 @@ export default class AuthController {
   if (!code) throw new UnprocessableEntity('Verification code is required')
   await resetPasswordValidator.validateAsync(req.body)
   const data = await AuthService.resetPassword(req.body, code)
-  return successHandler('Password reset successfully', 200,  data)(req, res)
+  return successHandler('Password Reset Successfully', 200, data)(req, res)
  }
 
  /**
@@ -81,6 +81,17 @@ export default class AuthController {
  public static async updateProfile(req: Request, res: Response) {
   await updateProfileValidator.validateAsync(req.body)
   const data = await AuthService.updateProfile(req.body, req.userInfo.uuid)
-  return successHandler('Profile updated', 200, data)(req, res)
+  return successHandler('Profile Updated', 200, data)(req, res)
+ }
+
+ /**
+  * Fetch a user's profile
+  * @param req 
+  * @param res 
+  */
+ public static async fetchProfile(req: Request, res: Response) {
+  const uuid = req.userInfo.uuid as string
+  const data = await AuthService.fetchProfile(uuid)
+  return successHandler('Profile Fetched Successful', 200, data)(req, res)
  }
 }

@@ -21,6 +21,7 @@ appRouter.post('/signup', AuthController.signup)
 appRouter.post('/verify-email', AuthController.verifyEmail)
 appRouter.post('/sendPasswordResetlink', AuthController.sendPasswordResetlink)
 appRouter.post('/resetPassword', AuthController.resetPassword)
+appRouter.get('/fetch-profile', authMiddleware, AuthController.fetchProfile)
 appRouter.patch('/update-profile', authMiddleware, AuthController.updateProfile)
 // virtual accounts
 appRouter.post('/create-british-pounds-account', authMiddleware, VirtualAccountsController.createGBPAccount)

@@ -69,9 +69,9 @@ export default class AuthService {
 
   const userInfo: UserModelInterface = await CrudRepo.fetchOneBy('users', 'id', user[0])
 
-//   await MessageQueue.consume('createUser', 'create::customer')
+  //   await MessageQueue.consume('createUser', 'create::customer')
 
-//   await MessageQueue.publish('createUser', userInfo)
+  //   await MessageQueue.publish('createUser', userInfo)
 
   return {
    user: userInfo,
@@ -104,9 +104,9 @@ export default class AuthService {
 
  /**
   * Updates a user's profile
-  * @param payload 
-  * @param uuid 
-  * @returns 
+  * @param payload
+  * @param uuid
+  * @returns
   */
  public static async updateProfile(payload: updateProfileInterface, uuid: string): Promise<string> {
   const { password, confirmPassword } = payload
@@ -167,5 +167,20 @@ export default class AuthService {
   await CrudRepo.update('users', 'code', code, payload)
 
   return 'Password reset successfully'
+ }
+
+ /**
+  * Fetch the profile of a user by their uuid
+  * @param userId
+  * @returns
+  */
+ public static async fetchProfile(uuid: string) {
+  const profile = await CrudRepo.fetchOneBy('users', 'uuid', uuid)
+
+  if (!profile) {
+   throw new NotFound('User Not Found')
+  }
+
+  return profile
  }
 }
