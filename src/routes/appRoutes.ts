@@ -30,6 +30,7 @@ appRouter.post('/create-naira-account', authMiddleware, VirtualAccountsControlle
 appRouter.post('/verify-bank-account', authMiddleware, BankAccountController.verifyAccount)
 appRouter.post('/add-bank-account', authMiddleware, BankAccountController.addBankAccount)
 appRouter.delete('/bank-account/:uuid', authMiddleware, BankAccountController.deleteBankAccount)
+appRouter.get('/dashboard', authMiddleware, TransactionsController.userAccountBalances)
 appRouter.post('/convert-funds', authMiddleware, TransactionsController.convertFunds)
 appRouter.post('/search', authMiddleware, TransactionsController.searchTransactions)
 appRouter.get('/list-transactions', authMiddleware, TransactionsController.listTransactions)

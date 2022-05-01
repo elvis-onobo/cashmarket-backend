@@ -17,6 +17,35 @@ const businessId = process.env.FINCRA_BUSINESS_ID
 
 export default class TransactionsService {
  /**
+  *
+  * @param userId
+  * @returns
+  */
+ public static async userAccountBalances(userId: number) {
+  const userAccountBalances = await db('wallets').where({ 
+    user_id: userId,
+    status: statusEnum.SUCCESS
+  })
+  .select('currency')
+  .groupBy('currency')
+  .sum('amount_received as balance')
+
+  const recentTransactions = await db('wallets').where({ 
+    user_id: userId,
+  })
+  .orderBy('created_at', 'desc')
+
+  if (!userAccountBalances) {
+   throw new NotFound('Stats Not Available Currently')
+  }
+
+  return {
+    account_balance: userAccountBalances,
+    recent_transactions: recentTransactions
+  }
+ }
+
+ /**
   * Returns the balance in a user's account
   * @param currency the currency of the account to search
   * @param userId the id of the user to search for
@@ -39,25 +68,25 @@ export default class TransactionsService {
 
  /**
   * Fee for converting currency
-  * @param amount 
-  * @returns 
+  * @param amount
+  * @returns
   */
- public static async calculateFee(amount:number){
-   const fee = 0.02 * amount 
+ public static async calculateFee(amount: number) {
+  const fee = 0.02 * amount
   return fee
  }
 
- public static async calculateNairaWithdrawalFee(amount:number){
-  if(amount < 10000){
-    return 20
+ public static async calculateNairaWithdrawalFee(amount: number) {
+  if (amount < 10000) {
+   return 20
   }
 
-  if(amount > 10000 && amount < 10000){
-    return 31
+  if (amount > 10000 && amount < 10000) {
+   return 31
   }
 
-  if(amount > 50000){
-    return 50
+  if (amount > 50000) {
+   return 50
   }
  }
 
@@ -212,14 +241,14 @@ export default class TransactionsService {
 
  /**
   * Withdraw Naira to bank account
-  * @param payload 
-  * @param userId 
+  * @param payload
+  * @param userId
   */
  public static async withdrawNaira(payload: NairaWithdrawalInterface, userId: number) {
   const balance = await this.getBalance(CurrencyEnum.NGN, userId)
 
-  if(balance[0].balance < payload.amount){
-    throw new UnprocessableEntity('Insufficient funds')
+  if (balance[0].balance < payload.amount) {
+   throw new UnprocessableEntity('Insufficient funds')
   }
 
   const bankAccount = await CrudRepo.fetchOneBy('bank_accounts', 'uuid', payload.bank_account_uuid)
@@ -243,22 +272,22 @@ export default class TransactionsService {
   })
 
   const fee = await this.calculateNairaWithdrawalFee(payload.amount)
-  console.log('>>>>>> ', fee);
-  
-  if(res.data.success === true) {
-    await CrudRepo.create('wallets', {
-      uuid: uuidv4(),
-     user_id: userId,
-     amount_received: -payload.amount,
-     customer_name: bankAccount.customer_name,
-     reference: res.data.data.reference,
-     status: statusEnum.PROCESSING,
-     currency: CurrencyEnum.NGN,
-     settlement_destination: settlementDestination.BANK_ACCOUNT,
-     settlement_account_number: bankAccount.account_number,
-     settlement_account_bank: bankAccount.bank_code,
-     fee
-    })
+  console.log('>>>>>> ', fee)
+
+  if (res.data.success === true) {
+   await CrudRepo.create('wallets', {
+    uuid: uuidv4(),
+    user_id: userId,
+    amount_received: -payload.amount,
+    customer_name: bankAccount.customer_name,
+    reference: res.data.data.reference,
+    status: statusEnum.PROCESSING,
+    currency: CurrencyEnum.NGN,
+    settlement_destination: settlementDestination.BANK_ACCOUNT,
+    settlement_account_number: bankAccount.account_number,
+    settlement_account_bank: bankAccount.bank_code,
+    fee,
+   })
   }
 
   return 'Processing Withdrawal'
