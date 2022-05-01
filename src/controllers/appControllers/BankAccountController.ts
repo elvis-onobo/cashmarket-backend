@@ -12,4 +12,10 @@ export default class BankAccountController{
         const data = await BankAccountService.addBankAccount(req.body, req.userInfo.id)
         return successHandler('Bank Account Saved Successfully', 201, data)(req, res)
     }
+
+    public static async deleteBankAccount(req:Request, res: Response){
+        const { uuid } = req.params
+        const data = await BankAccountService.deleteBankAccount(uuid)
+        return successHandler('Bank Account Deleted Successfully', 200, data)(req, res)
+    }
 }

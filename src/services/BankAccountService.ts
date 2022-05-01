@@ -24,4 +24,10 @@ export default class BankAccountService{
 
         return 'Bank Account Saved'
     }
+
+    public static async deleteBankAccount(bankAccountUUID:string){
+        const deleted = await CrudRepo.deleteById('bank_accounts', 'uuid', bankAccountUUID)
+
+        return true
+    }
 }

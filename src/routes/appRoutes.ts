@@ -27,6 +27,8 @@ appRouter.post('/create-british-pounds-account', authMiddleware, VirtualAccounts
 appRouter.post('/create-euro-account', authMiddleware, VirtualAccountsController.createEuroAccount)
 appRouter.post('/create-naira-account', authMiddleware, VirtualAccountsController.createNairaAccount)
 appRouter.post('/verify-bank-account', authMiddleware, BankAccountController.verifyAccount)
+appRouter.post('/add-bank-account', authMiddleware, BankAccountController.addBankAccount)
+appRouter.delete('/bank-account/:uuid', authMiddleware, BankAccountController.deleteBankAccount)
 appRouter.post('/convert-funds', authMiddleware, TransactionsController.convertFunds)
 appRouter.post('/search', authMiddleware, TransactionsController.searchTransactions)
 appRouter.get('/list-transactions', authMiddleware, TransactionsController.listTransactions)
