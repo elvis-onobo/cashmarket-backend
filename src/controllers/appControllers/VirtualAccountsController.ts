@@ -1,9 +1,10 @@
 import { Request, Response } from 'express'
 import VirtualAccountsService from '../../services/VirtualAccountsService'
 import { successHandler } from '../../helpers/successHandler'
-
+import { createGBPAccountValidator } from '../../validation/virtualAccountValidator'
 export default class VirtualAccountsController{
-    public static async createGBPAccount(req: Request, res: Response){        
+    public static async createGBPAccount(req: Request, res: Response){     
+        await createGBPAccountValidator.validateAsync(req.body)   
         const data = await VirtualAccountsService.createBritishPoundsAccount(req.body, req.userInfo.id)
         return successHandler('GBP Account creation in progress', 200, data)(req, res)
     }

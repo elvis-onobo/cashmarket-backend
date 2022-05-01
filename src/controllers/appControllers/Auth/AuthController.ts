@@ -90,6 +90,7 @@ export default class AuthController {
   * @param res 
   */
  public static async fetchProfile(req: Request, res: Response) {
+    //  TODO: validation
   const uuid = req.userInfo.uuid as string
   const data = await AuthService.fetchProfile(uuid)
   return successHandler('Profile Fetched Successful', 200, data)(req, res)
