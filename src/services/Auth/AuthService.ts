@@ -13,7 +13,7 @@ import {
  updateProfileInterface,
  resetPasswordInterface,
 } from '../../interfaces/Auth/UserInterface'
-import sendMail from '../../helpers/sendEmail'
+import SendNotification from '../../helpers/sendNotification'
 export default class AuthService {
  /**
   *
@@ -40,6 +40,8 @@ export default class AuthService {
   }
 
   const token = jsonwebtoken.sign(user, process.env.APP_KEY)
+  
+  const mail = await SendNotification.sendMail('welcome', 'evis.onobo@gmail.com', 'Welcome', { title: 'El'})
 
   return {
    user,
@@ -139,7 +141,7 @@ export default class AuthService {
   }
 
   // send e-mail
-  await sendMail()
+  const mail = await SendNotification.sendMail('welcome', 'evis.onobo@gmail.com', 'Welcome', { title: 'El'})
 
   return 'We have sent you an e-mail. Use it to reset your password.'
  }

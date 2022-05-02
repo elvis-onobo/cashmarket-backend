@@ -109,3 +109,7 @@ eventsEmitter.on('payout::funds', async (data) => {
   fee: data.fee,
  })
 })
+
+eventsEmitter.on('send::email', async ({ data })=>{
+    
+})
