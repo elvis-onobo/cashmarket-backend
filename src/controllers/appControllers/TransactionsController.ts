@@ -10,23 +10,31 @@ import {
 
 export default class VirtualAccountsController {
  public static async userAccountBalances(req: Request, res: Response) {
-  const userId = req.userInfo.id as number
-  if (!userId) {
+  const userUUID = req.userInfo.uuid as string
+  if (!userUUID) {
    throw new UnprocessableEntity('Required Params Not Found')
   }
-  const data = await TransactionsService.userAccountBalances(userId)
+  const data = await TransactionsService.userAccountBalances(userUUID)
   return successHandler('Dashboard Data Fetched Successful', 200, data)(req, res)
  }
 
  public static async convertFunds(req: Request, res: Response) {
+  const userUUID = req.userInfo.uuid as string
+  if (!userUUID) {
+    throw new UnprocessableEntity('Required Params Not Found')
+   }
   await convertFundsValidator.validateAsync(req.body)
-  const data = await TransactionsService.convertFunds(req.body, req.userInfo.id)
+  const data = await TransactionsService.convertFunds(req.body, userUUID)
   return successHandler('Fund Conversion Successful', 200, data)(req, res)
  }
 
  public static async withdrawNaira(req: Request, res: Response) {
+    const userUUID = req.userInfo.uuid as string
+    if (!userUUID) {
+      throw new UnprocessableEntity('Required Params Not Found')
+     }
   await withdrawNairaValidator.validateAsync(req.body)
-  const data = await TransactionsService.withdrawNaira(req.body, req.userInfo.id)
+  const data = await TransactionsService.withdrawNaira(req.body, userUUID)
   return successHandler('Processing Withdrawal', 200, data)(req, res)
  }
 

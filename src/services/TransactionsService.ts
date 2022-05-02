@@ -18,13 +18,13 @@ const businessId = process.env.FINCRA_BUSINESS_ID
 export default class TransactionsService {
  /**
   *
-  * @param userId
+  * @param userUUID
   * @returns
   */
- public static async userAccountBalances(userId: number) {
+ public static async userAccountBalances(userUUID:string) {
   const userAccountBalances = await db('wallets')
    .where({
-    user_id: userId,
+    user_uuid: userUUID,
     status: statusEnum.SUCCESS,
    })
    .select('currency')
@@ -33,7 +33,7 @@ export default class TransactionsService {
 
   const recentTransactions = await db('wallets')
    .where({
-    user_id: userId,
+    user_uuid: userUUID,
    })
    .orderBy('created_at', 'desc')
 
@@ -50,12 +50,12 @@ export default class TransactionsService {
  /**
   * Returns the balance in a user's account
   * @param currency the currency of the account to search
-  * @param userId the id of the user to search for
+  * @param userUUID the uuid of the user to search for
   * @returns
   */
- public static async getBalance(currency: string, userId: number) {
+ public static async getBalance(currency: string, userUUID: string) {
   return await CrudRepo.getSum('wallets', 'amount_received', 'balance', {
-   user_id: userId,
+   user_uuid: userUUID,
    currency: currency,
   })
  }
@@ -95,9 +95,9 @@ export default class TransactionsService {
  /**
   * Converts one currency to another
   * @param payload
-  * @param userId
+  * @param userUUID
   */
- public static async convertFunds(payload: ConvertFundsInterface, userId: number) {
+ public static async convertFunds(payload: ConvertFundsInterface, userUUID: string) {
   const { source_currency, destination_currency, source_amount, account_to_pay } = payload
   const sourceAmount = Number(source_amount)
   const fee = await this.calculateFee(sourceAmount)
@@ -108,14 +108,14 @@ export default class TransactionsService {
    const balance$ = trx('wallets')
     .where({
      status: statusEnum.SUCCESS,
-     user_id: userId,
+     user_uuid: userUUID,
      currency: source_currency,
     })
     .sum('amount_received as balance')
 
    // get the virtual account sending the money
    const sourceAccount$ = trx('virtual_accounts').where({
-    user_id: userId,
+    user_uuid: userUUID,
     currency: source_currency,
    })
 
@@ -141,7 +141,7 @@ export default class TransactionsService {
    // deduct source amount from source account
    await trx('wallets').insert({
     uuid: uuidv4(),
-    user_id: userId,
+    user_uuid: userUUID,
     fincra_virtual_account_id: sourceAccount[0].fincra_virtual_account_id,
     amount_received: -sourceAmount + -fee,
     customer_name: sourceAccount[0].account_name,
@@ -159,7 +159,7 @@ export default class TransactionsService {
    if (account_to_pay === settlementDestination.VIRTUAL_ACCOUNT) {
     const destinationVirtualAccount = await trx('virtual_accounts')
      .where({
-      user_id: userId,
+      user_uuid: userUUID,
       currency: destination_currency,
      })
      .first()
@@ -171,7 +171,7 @@ export default class TransactionsService {
     // add converted amount to destination account
     await trx('wallets').insert({
      uuid: uuidv4(),
-     user_id: userId,
+     user_uuid: userUUID,
      fincra_virtual_account_id: destinationVirtualAccount.fincra_virtual_account_id,
      customer_name: destinationVirtualAccount.account_name,
      amount_received: amountReceived,
@@ -189,7 +189,7 @@ export default class TransactionsService {
     }
 
     const payoutToBankAccountData = {
-     user_id: userId,
+     user_uuid: userUUID,
      amount_received: amountReceived,
      customer_name: recipientAccount.customer_name,
      reference: uuidv4(),
@@ -246,8 +246,8 @@ export default class TransactionsService {
   * @param payload
   * @param userId
   */
- public static async withdrawNaira(payload: NairaWithdrawalInterface, userId: number) {
-  const balance = await this.getBalance(CurrencyEnum.NGN, userId)
+ public static async withdrawNaira(payload: NairaWithdrawalInterface, userUUID: string) {
+  const balance = await this.getBalance(CurrencyEnum.NGN, userUUID)
 
   if (balance[0].balance < payload.amount) {
    throw new UnprocessableEntity('Insufficient funds')
@@ -279,7 +279,7 @@ export default class TransactionsService {
   if (res.data.success === true) {
    await CrudRepo.create('wallets', {
     uuid: uuidv4(),
-    user_id: userId,
+    user_uuid: userUUID,
     amount_received: -payload.amount,
     customer_name: bankAccount.customer_name,
     reference: res.data.data.reference,

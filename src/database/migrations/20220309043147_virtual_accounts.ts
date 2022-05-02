@@ -5,7 +5,7 @@ export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable('virtual_accounts', (table: Knex.TableBuilder) => {
         table.increments('id', { primaryKey: true })
         table.uuid('uuid').notNullable().unique()
-        table.integer('user_id').references('id').inTable('users').notNullable().unsigned()
+        table.uuid('user_uuid').references('uuid').inTable('users').notNullable()
         table.uuid('fincra_virtual_account_id').notNullable().unique()
         table.string('currency').notNullable()
         table.string('currency_type').notNullable()
