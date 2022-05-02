@@ -5,6 +5,8 @@ import {
  verifyBankAccountValidator,
  createBankAccountValidator,
 } from '../../validation/bankAccountValidator'
+import { UnprocessableEntity } from 'http-errors'
+
 export default class BankAccountController {
  public static async verifyAccount(req: Request, res: Response) {
   await verifyBankAccountValidator.validateAsync(req.body)
@@ -19,8 +21,8 @@ export default class BankAccountController {
  }
 
  public static async deleteBankAccount(req: Request, res: Response) {
-  // TODO: validation
   const { uuid } = req.params
+  if(!uuid){ throw new UnprocessableEntity('Bank Account UUID is a Required Param') }
   const data = await BankAccountService.deleteBankAccount(uuid)
   return successHandler('Bank Account Deleted Successfully', 200, data)(req, res)
  }

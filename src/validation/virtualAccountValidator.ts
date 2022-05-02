@@ -1,6 +1,6 @@
 import Joi from 'joi'
 
-export const createGBPAccountValidator = Joi.object({
+export const createForeignAccountValidator = Joi.object({
  meansofId: Joi.string().uri().required(),
  utilityBill: Joi.string().uri().required(),
  attachments: Joi.string().uri().required(),
@@ -24,6 +24,16 @@ export const createGBPAccountValidator = Joi.object({
     issuedDate: Joi.date().required(),
     expirationDate: Joi.date().required(),
   }),
-  occupation: Joi.string().alphanum().required(),
- }),
+  occupation: Joi.string().required(),
+}),
 })
+
+export const createNGNAccountValidator = Joi.object({
+  KYCInformation: Joi.object().keys({
+   firstName: Joi.string().alphanum().required(),
+   lastName: Joi.string().alphanum().required(),
+   bvn: Joi.string().alphanum().required(),
+   occupation: Joi.string().required(),
+  }),
+ })
+ 

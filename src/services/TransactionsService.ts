@@ -22,26 +22,28 @@ export default class TransactionsService {
   * @returns
   */
  public static async userAccountBalances(userId: number) {
-  const userAccountBalances = await db('wallets').where({ 
+  const userAccountBalances = await db('wallets')
+   .where({
     user_id: userId,
-    status: statusEnum.SUCCESS
-  })
-  .select('currency')
-  .groupBy('currency')
-  .sum('amount_received as balance')
+    status: statusEnum.SUCCESS,
+   })
+   .select('currency')
+   .groupBy('currency')
+   .sum('amount_received as balance')
 
-  const recentTransactions = await db('wallets').where({ 
+  const recentTransactions = await db('wallets')
+   .where({
     user_id: userId,
-  })
-  .orderBy('created_at', 'desc')
+   })
+   .orderBy('created_at', 'desc')
 
   if (!userAccountBalances) {
    throw new NotFound('Stats Not Available Currently')
   }
 
   return {
-    account_balance: userAccountBalances,
-    recent_transactions: recentTransactions
+   account_balance: userAccountBalances,
+   recent_transactions: recentTransactions,
   }
  }
 

@@ -9,7 +9,7 @@ import {
  sendPasswordResetLinkValidator,
  resetPasswordValidator,
 } from '../../../validation/userValidator'
-import { UnprocessableEntity } from 'http-errors'
+import { UnprocessableEntity, NotFound } from 'http-errors'
 
 export default class AuthController {
  /**
@@ -66,7 +66,7 @@ export default class AuthController {
   */
  public static async resetPassword(req: Request, res: Response) {
   const code = req.query.code as string
-  if (!code) throw new UnprocessableEntity('Verification code is required')
+  if (!code) throw new UnprocessableEntity('Verification Code Is Required')
   await resetPasswordValidator.validateAsync(req.body)
   const data = await AuthService.resetPassword(req.body, code)
   return successHandler('Password Reset Successfully', 200, data)(req, res)
@@ -79,8 +79,10 @@ export default class AuthController {
   * @returns
   */
  public static async updateProfile(req: Request, res: Response) {
+  const uuid = req.userInfo.uuid as string
+  if(!uuid){ throw new NotFound('User Not Found') }
   await updateProfileValidator.validateAsync(req.body)
-  const data = await AuthService.updateProfile(req.body, req.userInfo.uuid)
+  const data = await AuthService.updateProfile(req.body, uuid)
   return successHandler('Profile Updated', 200, data)(req, res)
  }
 
@@ -90,8 +92,8 @@ export default class AuthController {
   * @param res 
   */
  public static async fetchProfile(req: Request, res: Response) {
-    //  TODO: validation
   const uuid = req.userInfo.uuid as string
+  if(!uuid){ throw new NotFound('User Not Found') }
   const data = await AuthService.fetchProfile(uuid)
   return successHandler('Profile Fetched Successful', 200, data)(req, res)
  }
