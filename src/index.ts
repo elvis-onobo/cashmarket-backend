@@ -3,6 +3,7 @@ import 'dotenv/config'
 import express, {Application} from 'express'
 import appRouter from './routes/appRoutes'
 import { errorMiddleware } from './middleware/errorMiddleware'
+import logger from './helpers/logger'
 
 const app:Application = express()
 
