@@ -5,6 +5,7 @@ import Fincra from '../config/axios-fincra'
 import { accountTypeEnum } from '../Enums/AccountTypeEnum'
 import { settlementDestination } from '../Enums/SettlementDestinationsEnum'
 import { statusEnum } from '../Enums/StatusEnum'
+import SendNotification from '../helpers/sendNotification'
 
 const eventsEmitter = new EventEmitter()
 export default eventsEmitter
@@ -110,6 +111,11 @@ eventsEmitter.on('payout::funds', async (data) => {
  })
 })
 
-eventsEmitter.on('send::email', async ({ data })=>{
-    
+eventsEmitter.on('send::email', async (data)=>{    
+    await SendNotification.sendMail(
+        data.template,
+        data.to,
+        data.subject,
+        data.context 
+    )
 })

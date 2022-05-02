@@ -20,7 +20,7 @@ export default class AuthService {
   * @param payload user's password and e-mail
   * @returns
   */
- public static async loginUser(payload: UserLoginInterface): Promise<object | string> {
+ public static async loginUser(payload: UserLoginInterface, ipAddress:string): Promise<object | string> {
   const { email, password } = payload
 
   const user: UserModelInterface = await CrudRepo.fetchOneBy('users', 'email', email)
@@ -40,8 +40,22 @@ export default class AuthService {
   }
 
   const token = jsonwebtoken.sign(user, process.env.APP_KEY)
-  
-  const mail = await SendNotification.sendMail('welcome', 'evis.onobo@gmail.com', 'Welcome', { title: 'El'})
+
+  const emailData = {
+    template: 'welcome',
+    to: user.email,
+    subject: 'Login Notification',
+    context: { 
+      title: `Hi ${user.first_name}`,
+      message: `There has been a login on your account`,
+      time: new Date().toUTCString(),
+      ipAddress,
+    }
+  }
+
+  await MessageQueue.publish('general', emailData)
+
+  await MessageQueue.consume('general', 'send::email')
 
   return {
    user,

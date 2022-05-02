@@ -20,7 +20,7 @@ export default class AuthController {
   */
  public static async login(req: Request, res: Response) {
   await loginUserValidator.validateAsync(req.body)
-  const data = await AuthService.loginUser(req.body)
+  const data = await AuthService.loginUser(req.body, req.ip)
   return successHandler('Login Successful', 200, data)(req, res)
  }
 

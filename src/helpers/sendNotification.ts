@@ -42,4 +42,8 @@ export default class SendNotification {
 
   await transporter.sendMail(mailVar)
  }
+
+ public static async sendPushNotification(){
+
+ }
 }
