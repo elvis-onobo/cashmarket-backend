@@ -42,11 +42,11 @@ export default class AuthService {
   const token = jsonwebtoken.sign(user, process.env.APP_KEY)
 
   const emailData = {
-    template: 'welcome',
+    template: 'login',
     to: user.email,
     subject: 'Login Notification',
     context: { 
-      title: `Hi ${user.first_name}`,
+      name: `${user.first_name}`,
       message: `There has been a login on your account`,
       time: new Date().toUTCString(),
       ipAddress,
@@ -85,9 +85,19 @@ export default class AuthService {
 
   const userInfo: UserModelInterface = await CrudRepo.fetchOneBy('users', 'id', user[0])
 
-  //   await MessageQueue.consume('createUser', 'create::customer')
+  const emailData = {
+    template: 'verifyEmail',
+    to: email,
+    subject: 'Login Notification',
+    context: { 
+      name: `${first_name}`,
+      code: userInfo.verification_code,
+    }
+  }
 
-  //   await MessageQueue.publish('createUser', userInfo)
+  await MessageQueue.publish('general', emailData)
+
+  await MessageQueue.consume('general', 'send::email')
 
   return {
    user: userInfo,

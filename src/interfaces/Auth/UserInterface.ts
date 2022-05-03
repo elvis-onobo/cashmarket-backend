@@ -7,7 +7,7 @@ export interface UserModelInterface {
  phone: number
  password: string
  is_verified: boolean
- code: string
+ verification_code: string
  created_at: Date
  updated_at: Date
 }
