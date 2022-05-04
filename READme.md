@@ -26,3 +26,6 @@ For Knex commands, prefix all commands with `yarn knex`. For example
 
 `yarn knex migrate:make {table-name}`
 
+## TODO
+1. Add Push Notifications
+2. Market where people can post ads for currency they have for sale or buy
