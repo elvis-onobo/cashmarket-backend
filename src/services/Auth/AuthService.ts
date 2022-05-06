@@ -20,7 +20,10 @@ export default class AuthService {
   * @param payload user's password and e-mail
   * @returns
   */
- public static async loginUser(payload: UserLoginInterface, ipAddress:string): Promise<object | string> {
+ public static async loginUser(
+  payload: UserLoginInterface,
+  ipAddress: string
+ ): Promise<object | string> {
   const { email, password } = payload
 
   const user: UserModelInterface = await CrudRepo.fetchOneBy('users', 'email', email)
@@ -42,20 +45,20 @@ export default class AuthService {
   const token = jsonwebtoken.sign(user, process.env.APP_KEY)
 
   const emailData = {
-    template: 'login',
-    to: user.email,
-    subject: 'Login Notification',
-    context: { 
-      name: `${user.first_name}`,
-      message: `There has been a login on your account`,
-      time: new Date().toUTCString(),
-      ipAddress,
-    }
+   template: 'login',
+   to: user.email,
+   subject: 'Login Notification',
+   context: {
+    name: `${user.first_name}`,
+    message: `There has been a login on your account`,
+    time: new Date().toUTCString(),
+    ipAddress,
+   },
   }
 
-  await MessageQueue.publish('general', emailData)
+  // await MessageQueue.publish('general', emailData)
 
-  await MessageQueue.consume('general', 'send::email')
+  // await MessageQueue.consume('general', 'send::email')
 
   return {
    user,
@@ -68,8 +71,15 @@ export default class AuthService {
   * @param payload
   * @returns
   */
- public static async signup(payload: UserRegistrationInterface): Promise<object> {
+ public static async signup(payload: UserRegistrationInterface): Promise<string> {
   const { first_name, last_name, email, phone, password } = payload
+
+  const emailExists: UserModelInterface = await CrudRepo.fetchOneBy('users', 'email', email)
+  const phoneNumberExists: UserModelInterface = await CrudRepo.fetchOneBy('users', 'phone', phone)
+
+  if (emailExists || phoneNumberExists) {
+   throw new UnprocessableEntity('User Already Exists')
+  }
 
   const hashedPassword = await argon2.hash(password)
 
@@ -86,22 +96,20 @@ export default class AuthService {
   const userInfo: UserModelInterface = await CrudRepo.fetchOneBy('users', 'id', user[0])
 
   const emailData = {
-    template: 'verifyEmail',
-    to: email,
-    subject: 'Login Notification',
-    context: { 
-      name: `${first_name}`,
-      code: userInfo.verification_code,
-    }
+   template: 'verifyEmail',
+   to: email,
+   subject: 'Login Notification',
+   context: {
+    name: `${first_name}`,
+    code: userInfo.verification_code,
+   },
   }
 
-  await MessageQueue.publish('general', emailData)
+  // await MessageQueue.publish('general', emailData)
 
-  await MessageQueue.consume('general', 'send::email')
+  // await MessageQueue.consume('general', 'send::email')
 
-  return {
-   user: userInfo,
-  }
+  return 'Registration Successful'
  }
 
  /**
@@ -119,13 +127,13 @@ export default class AuthService {
   }
 
   // update is_verified to true
-  CrudRepo.update('users', 'verification_code', code, {
+  await CrudRepo.update('users', 'verification_code', code, {
    is_verified: true,
-   code: randomCode(),
+   verification_code: randomCode(),
   })
 
   // return message
-  return 'E-mail verified'
+  return 'E-mail verified. You May Now Login'
  }
 
  /**
@@ -135,20 +143,36 @@ export default class AuthService {
   * @returns
   */
  public static async updateProfile(payload: updateProfileInterface, uuid: string): Promise<string> {
-  const { password, confirmPassword } = payload
+  const { first_name, last_name, phone, currentPassword, newPassword, confirmNewPassword } = payload
 
-  if (password) {
-   if (password !== confirmPassword) {
+  const user = await CrudRepo.fetchOneBy('users', 'uuid', uuid)
+
+  if(!user){
+    throw new NotFound('User Not Found')
+  }
+
+  if (currentPassword) {
+   const passwordMatch = await argon2.verify(user.password, currentPassword)
+
+   if (!passwordMatch) {
+    throw new Unauthorized('Incorrect Password!')
+   }
+
+   if (newPassword !== confirmNewPassword) {
     throw new UnprocessableEntity('Passwords do not match.')
    }
   }
 
-  delete payload.confirmPassword
-  delete payload.oldPassword
+  const hashedPassword = await argon2.hash(newPassword)
 
-  await CrudRepo.update('users', 'uuid', uuid, payload)
+  await CrudRepo.update('users', 'uuid', uuid, {
+    first_name,
+    last_name,
+    phone,
+    password: hashedPassword
+  })
 
-  return 'Profile updated'
+  return 'Profile Updated'
  }
 
  /**
@@ -164,8 +188,19 @@ export default class AuthService {
    throw new NotFound('This e-mail does not exist in our system.')
   }
 
-  // send e-mail
-  const mail = await SendNotification.sendMail('welcome', 'evis.onobo@gmail.com', 'Welcome', { title: 'El'})
+  const emailData = {
+   template: 'forgot_password',
+   to: email,
+   subject: 'Reset Your Password',
+   context: {
+    name: user.first_name,
+    code: user.verification_code,
+   },
+  }
+
+  await MessageQueue.publish('general', emailData)
+
+  await MessageQueue.consume('general', 'send::email')
 
   return 'We have sent you an e-mail. Use it to reset your password.'
  }
@@ -190,7 +225,7 @@ export default class AuthService {
 
   delete payload.confirmPassword
 
-  await CrudRepo.update('users', 'code', code, payload)
+  await CrudRepo.update('users', 'verification_code', code, payload)
 
   return 'Password reset successfully'
  }

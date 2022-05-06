@@ -216,8 +216,9 @@ export default class TransactionsService {
   * @param page
   * @returns
   */
- public static async listTransactions(userId: number, page: number) {
-  const transactions = await CrudRepo.fetchAllandPaginate('wallets', 'user_id', userId, 20, page)
+ public static async listTransactions(userUUID: string, page: number) {
+  const transactions = await CrudRepo.fetchAllandPaginate('wallets', 'user_uuid', userUUID, 20, page)
+  if(!transactions){ throw new NotFound('You Have Not Performed Any Transaction')}
   return transactions
  }
 

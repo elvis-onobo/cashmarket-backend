@@ -32,4 +32,13 @@ export default class BankAccountController {
   const data = await BankAccountService.deleteBankAccount(uuid)
   return successHandler('Bank Account Deleted Successfully', 200, data)(req, res)
  }
+
+ public static async fetchBankAccounts(req: Request, res: Response){
+    const uuid = req.userInfo.uuid as string
+    if (!uuid) {
+     throw new UnprocessableEntity('User Not Found')
+    }
+    const data = await BankAccountService.fetchBankAccounts(uuid)
+    return successHandler('Bank Account Fetched Successfully', 200, data)(req, res)   
+ }
 }

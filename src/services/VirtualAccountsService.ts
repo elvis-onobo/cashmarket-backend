@@ -4,12 +4,24 @@ import {
     CreateVirtualAccountInterface 
 } from '../interfaces/VirtualAccountsInterface'
 import CrudRepo from '../repository/CrudRepo'
-import { accountTypeEnum } from '../Enums/AccountTypeEnum'
+import { NotFound } from 'http-errors'
 
 const accountType = 'individual'
 const accountCreationURL = '/profile/virtual-accounts/requests'
 
 export default class VirtualAccountsService{
+    public static tableName:string = 'virtual_accounts'
+    
+    public static async fetchVirtualAccounts(userUUID: string){
+        const accounts = await CrudRepo.fetchAll(this.tableName, 'user_uuid', userUUID)
+
+        if(!accounts){
+            throw new NotFound('You Have Not Requested For An Account')
+        }
+
+        return accounts
+    }
+
     public static async createBritishPoundsAccount(payload:CreateVirtualAccountInterface, userId:number){        
         const res = await Fincra.post(accountCreationURL, { 
             currency: 'GBP',
@@ -42,9 +54,9 @@ export default class VirtualAccountsService{
         const data = res.data.data
 
         // save the account information against the user id in db
-        const account = await CrudRepo.create('virtual_accounts', {
+        const account = await CrudRepo.create(this.tableName, {
             uuid: uuidv4(),
-            user_id: userId, 
+            user_uuid: userId, 
             fincra_virtual_account_id: data._id,
             currency: data.currency,
             currency_type: data.currencyType,
@@ -90,9 +102,9 @@ export default class VirtualAccountsService{
         const data = res.data.data
 
         // save the account information against the user id in db
-        const account = await CrudRepo.create('virtual_accounts', {
+        const account = await CrudRepo.create(this.tableName, {
             uuid: uuidv4(),
-            user_id: userId, 
+            user_uuid: userId, 
             fincra_virtual_account_id: data._id,
             currency: data.currency,
             currency_type: data.currencyType,
@@ -120,9 +132,9 @@ export default class VirtualAccountsService{
         const data = res.data.data
         
         // save the account information against the user id in db
-        const account = await CrudRepo.create('virtual_accounts', {
+        const account = await CrudRepo.create(this.tableName, {
             uuid: uuidv4(),
-            user_id: userId,
+            user_uuid: userId,
             fincra_virtual_account_id: data._id,
             currency: data.currency,
             currency_type: data.currencyType,

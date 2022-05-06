@@ -14,19 +14,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const http_errors_1 = require("http-errors");
 dotenv_1.default.config({ path: '../../.env' });
 function authMiddleware(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const authToken = req.headers.authorization;
         if (!authToken) {
-            return res.status(401).send('Unauthorized');
+            throw new http_errors_1.Unauthorized();
         }
         const tokensArray = authToken.split(' ');
         const token = tokensArray[1];
         if (!process.env.APP_KEY) {
-            return res.status(404).json({
-                message: 'App key not found'
-            });
+            throw new http_errors_1.InternalServerError();
         }
         const decoded = yield jsonwebtoken_1.default.verify(token, process.env.APP_KEY);
         req.userInfo = decoded;

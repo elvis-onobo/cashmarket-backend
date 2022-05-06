@@ -33,9 +33,9 @@ export interface updateProfileInterface {
  first_name: string
  last_name: string
  phone: number
- oldPassword?: string
- password: string
- confirmPassword?: string
+ currentPassword: string
+ newPassword: string
+ confirmNewPassword: string
 }
 
 export interface resetPasswordInterface {

@@ -10,7 +10,7 @@ export async function up(knex: Knex): Promise<void> {
         table.decimal('amount_received', 12,2).notNullable()
         table.decimal('fee', 12,2).notNullable()
         table.string('customer_name').notNullable()
-        table.string('reference').notNullable()
+        table.string('reference').notNullable().unique()
         table.string('status').notNullable()
         table.string('currency').notNullable()
         table.string('settlement_destination').notNullable()

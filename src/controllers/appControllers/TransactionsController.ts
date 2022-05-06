@@ -40,11 +40,11 @@ export default class VirtualAccountsController {
 
  public static async listTransactions(req: Request, res: Response) {
   const page = req.query.page as unknown as number
-  const userId = req.userInfo.id as number
-  if (!page || !userId) {
+  const userUUID = req.userInfo.uuid as string
+  if (!page || !userUUID) {
    throw new UnprocessableEntity('Required Params Not Found')
   }
-  const data = await TransactionsService.listTransactions(req.userInfo.id, page)
+  const data = await TransactionsService.listTransactions(userUUID, page)
   return successHandler('Transactions Fetched Successful', 200, data)(req, res)
  }
 
