@@ -3,7 +3,7 @@ import db from '../database/db'
 import CrudRepo from '../repository/CrudRepo'
 import {
  ConvertFundsInterface,
- NairaWithdrawalInterface,
+ WithdrawalInterface,
  ChartDataInterface
 } from '../interfaces/TransactionsInterface'
 import { NotFound, UnprocessableEntity } from 'http-errors'
@@ -278,32 +278,44 @@ export default class TransactionsService {
   * @param payload
   * @param userId
   */
- public static async withdrawNaira(payload: NairaWithdrawalInterface, userUUID: string) {
-  const balance = await this.getBalance(CurrencyEnum.NGN, userUUID)
-
-  if (balance[0].balance < payload.amount) {
+ public static async withdraw(payload: WithdrawalInterface, userUUID: string) {
+  const balance = await this.getBalance(payload.currency, userUUID)
+  
+  if (Number(balance[0].balance) < Number(payload.amount)) {
    throw new UnprocessableEntity('Insufficient funds')
   }
 
-  const bankAccount = await CrudRepo.fetchOneBy('bank_accounts', 'uuid', payload.bank_account_uuid)
+  let bankAccount = []
+  if(payload.bank_account_uuid){
+    bankAccount = await CrudRepo.fetchOneBy('bank_accounts', 'uuid', payload.bank_account_uuid)
+  }
+
+  let accountHolderName:string =''
+  if(payload.first_name && payload.last_name){
+    accountHolderName = payload.first_name + payload.last_name
+  }
 
   const res = await Fincra.post('/disbursements/payouts/', {
-   sourceCurrency: CurrencyEnum.NGN,
-   destinationCurrency: CurrencyEnum.NGN,
+   sourceCurrency: payload.currency,
+   destinationCurrency: payload.currency,
    amount: payload.amount,
    business: businessId,
-   description: 'Withdrawal transaction',
+   description: payload.description,
    customerReference: uuidv4(),
    beneficiary: {
-    lastName: bankAccount.customer_name,
-    firstName: bankAccount.customer_name,
-    accountNumber: bankAccount.account_number,
-    accountHolderName: bankAccount.customer_name,
+    lastName: payload.currency === CurrencyEnum.NGN ? bankAccount.customer_name: payload.first_name,
+    firstName: payload.currency === CurrencyEnum.NGN ? bankAccount.customer_name: payload.last_name,
+    accountNumber: payload.currency === CurrencyEnum.NGN ? bankAccount.account_number: payload.account_number,
+    accountHolderName: payload.currency === CurrencyEnum.NGN ? bankAccount.customer_name: accountHolderName,
     type: accountTypeEnum.INDIVIDUAL,
-    bankCode: bankAccount.bank_code,
+    bankCode: payload.currency === CurrencyEnum.NGN ? bankAccount.bank_code: undefined,
+    country: payload.currency !== CurrencyEnum.NGN ? bankAccount.country_code: 'NG',
+    paymentScheme: payload.currency !== CurrencyEnum.NGN ? payload.payment_scheme: undefined,
+    sortCode: payload.currency !== CurrencyEnum.NGN ? payload.sort_code: undefined
    },
    paymentDestination: settlementDestination.BANK_ACCOUNT,
   })
+
 
   const fee = await this.calculateNairaWithdrawalFee(payload.amount)
 
@@ -312,13 +324,14 @@ export default class TransactionsService {
     uuid: uuidv4(),
     user_uuid: userUUID,
     amount_received: -payload.amount,
-    customer_name: bankAccount.customer_name,
+    customer_name: payload.currency === CurrencyEnum.NGN ? bankAccount.customer_name: res.data.data.recipient.name,
     reference: res.data.data.reference,
     status: statusEnum.PROCESSING,
-    currency: CurrencyEnum.NGN,
+    // description: payload.description,
+    currency: payload.currency,
     settlement_destination: settlementDestination.BANK_ACCOUNT,
-    settlement_account_number: bankAccount.account_number,
-    settlement_account_bank: bankAccount.bank_code,
+    settlement_account_number: payload.currency === CurrencyEnum.NGN ? bankAccount.account_number: payload.account_number,
+    settlement_account_bank: payload.currency === CurrencyEnum.NGN ? bankAccount.bank_code: payload.sort_code,
     fee,
    })
   }

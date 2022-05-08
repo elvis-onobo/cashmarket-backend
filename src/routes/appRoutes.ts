@@ -38,6 +38,6 @@ appRouter.get('/dashboard', authMiddleware, TransactionsController.userAccountBa
 appRouter.post('/convert-funds', authMiddleware, TransactionsController.convertFunds)
 appRouter.post('/search', authMiddleware, TransactionsController.searchTransactions)
 appRouter.get('/list-transactions', authMiddleware, TransactionsController.listTransactions)
-appRouter.post('/withdraw-naira', authMiddleware, TransactionsController.withdrawNaira)
+appRouter.post('/withdraw', authMiddleware, TransactionsController.withdraw)
 // Webhook
 appRouter.post('/webhook', WebhookController.trigger)

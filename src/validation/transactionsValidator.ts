@@ -1,4 +1,5 @@
 import Joi from 'joi'
+import {CurrencyEnum} from '../Enums/CurrencyEnum'
 
 export const convertFundsValidator = Joi.object({
  source_currency: Joi.string().required(),
@@ -11,8 +12,17 @@ export const searchTransactionsValidator = Joi.object({
  search: Joi.string().required(),
 })
 
-export const withdrawNairaValidator = Joi.object({
+export const withdrawValidator = Joi.object({
+ currency: Joi.string().valid(...Object.keys(CurrencyEnum)).required(),
  amount: Joi.number().required(),
- purpose: Joi.string().required(),
- bank_account_uuid: Joi.string().required(),
+ description: Joi.string().required(),
+ bank_account_uuid: Joi.string().allow(null),
+ payment_scheme: Joi.string().allow(null),
+ sort_code: Joi.string().allow(null),
+ last_name: Joi.string().allow(null),
+ first_name: Joi.string().allow(null),
+ account_number: Joi.string().allow(null),
+ account_holder_name: Joi.string().allow(null),
+ bank_code: Joi.string().allow(null),
+ country: Joi.string().allow(null),
 })

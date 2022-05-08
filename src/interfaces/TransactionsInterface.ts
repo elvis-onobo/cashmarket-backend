@@ -6,10 +6,18 @@ export interface ConvertFundsInterface {
  account_to_pay: string
 }
 
-export interface NairaWithdrawalInterface {
+export interface WithdrawalInterface {
+ currency: string
  amount: number
- purpose: string
- bank_account_uuid: string
+ description: string
+ bank_account_uuid?: string
+ payment_scheme?: string
+ sort_code?: string
+ last_name?: string
+ first_name?: string
+ account_number?: string
+ bank_code?: string
+ country?: string
 }
 
 export interface ChartDataInterface {

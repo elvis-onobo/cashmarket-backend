@@ -1,5 +1,5 @@
 import { Knex } from "knex";
-
+import { CurrencyEnum } from '../../Enums/CurrencyEnum'
 
 export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable('wallets', (table: Knex.TableBuilder) => {
@@ -10,9 +10,10 @@ export async function up(knex: Knex): Promise<void> {
         table.decimal('amount_received', 12,2).notNullable()
         table.decimal('fee', 12,2).notNullable()
         table.string('customer_name').notNullable()
+        table.string('description').notNullable()
         table.string('reference').notNullable().unique()
         table.string('status').notNullable()
-        table.string('currency').notNullable()
+        table.enu('currency', [Object.keys(CurrencyEnum)]).notNullable()
         table.string('settlement_destination').notNullable()
         table.string('settlement_account_number').nullable()
         table.string('settlement_account_bank').nullable()

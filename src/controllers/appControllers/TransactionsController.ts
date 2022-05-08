@@ -5,7 +5,7 @@ import { UnprocessableEntity } from 'http-errors'
 import {
  convertFundsValidator,
  searchTransactionsValidator,
- withdrawNairaValidator,
+ withdrawValidator,
 } from '../../validation/transactionsValidator'
 
 export default class VirtualAccountsController {
@@ -28,13 +28,13 @@ export default class VirtualAccountsController {
   return successHandler('Fund Conversion Successful', 200, data)(req, res)
  }
 
- public static async withdrawNaira(req: Request, res: Response) {
+ public static async withdraw(req: Request, res: Response) {
     const userUUID = req.userInfo.uuid as string
     if (!userUUID) {
       throw new UnprocessableEntity('Required Params Not Found')
      }
-  await withdrawNairaValidator.validateAsync(req.body)
-  const data = await TransactionsService.withdrawNaira(req.body, userUUID)
+  await withdrawValidator.validateAsync(req.body)
+  const data = await TransactionsService.withdraw(req.body, userUUID)
   return successHandler('Processing Withdrawal', 200, data)(req, res)
  }
 
