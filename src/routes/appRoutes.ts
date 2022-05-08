@@ -32,6 +32,7 @@ appRouter.post('/verify-bank-account', authMiddleware, BankAccountController.ver
 appRouter.post('/add-bank-account', authMiddleware, BankAccountController.addBankAccount)
 appRouter.get('/bank-accounts', authMiddleware, BankAccountController.fetchBankAccounts)
 appRouter.delete('/bank-account/:uuid', authMiddleware, BankAccountController.deleteBankAccount)
+appRouter.get('/list-banks', authMiddleware, BankAccountController.listBanks)
 
 appRouter.get('/dashboard', authMiddleware, TransactionsController.userAccountBalances)
 appRouter.post('/convert-funds', authMiddleware, TransactionsController.convertFunds)

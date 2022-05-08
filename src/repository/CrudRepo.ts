@@ -34,7 +34,7 @@ export default class CrudRepo {
      * @returns 
      */
      public static async fetchAllandPaginate(table:string, row:string, value:any, perPage:number = 20, page:number = 1) {
-        return await db(table).where(row, value).paginate({ perPage: perPage, currentPage: page })
+        return await db(table).where(row, value).paginate({ perPage: perPage, currentPage: page, isLengthAware:true })
     }
     
     /**

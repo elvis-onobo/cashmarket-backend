@@ -8,5 +8,5 @@ export const verifyBankAccountValidator = Joi.object({
 export const createBankAccountValidator = Joi.object({
     account_number: Joi.number().required(),
     bank_code: Joi.number().required(),
-    customer_name: Joi.string().required()
+    customer_name: Joi.string().required(),
 })

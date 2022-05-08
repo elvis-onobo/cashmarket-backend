@@ -41,4 +41,13 @@ export default class BankAccountController {
     const data = await BankAccountService.fetchBankAccounts(uuid)
     return successHandler('Bank Account Fetched Successfully', 200, data)(req, res)   
  }
+
+ public static async listBanks(req: Request, res: Response){
+   const currency = req.query.currency as string
+   if (!currency) {
+    throw new UnprocessableEntity('You Must Provide A currency')
+   }
+   const data = await BankAccountService.listBanks(currency)
+   return successHandler('Bank Account Fetched Successfully', 200, data)(req, res)  
+ }
 }

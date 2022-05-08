@@ -4,6 +4,7 @@ import CrudRepo from '../repository/CrudRepo'
 import {
  ConvertFundsInterface,
  NairaWithdrawalInterface,
+ ChartDataInterface
 } from '../interfaces/TransactionsInterface'
 import { NotFound, UnprocessableEntity } from 'http-errors'
 import { statusEnum } from '../Enums/StatusEnum'
@@ -12,6 +13,7 @@ import { CurrencyEnum } from '../Enums/CurrencyEnum'
 import { settlementDestination } from '../Enums/SettlementDestinationsEnum'
 import MessageQueue from '../config/messageQueue'
 import Fincra from '../config/axios-fincra'
+import moment from 'moment'
 
 const businessId = process.env.FINCRA_BUSINESS_ID
 
@@ -21,7 +23,7 @@ export default class TransactionsService {
   * @param userUUID
   * @returns
   */
- public static async userAccountBalances(userUUID:string) {
+ public static async userAccountBalances(userUUID: string) {
   const userAccountBalances = await db('wallets')
    .where({
     user_uuid: userUUID,
@@ -31,11 +33,28 @@ export default class TransactionsService {
    .groupBy('currency')
    .sum('amount_received as balance')
 
+  const lastThirtyDaysTransactionsForChart:ChartDataInterface[] = await db('wallets')
+   .where({
+    user_uuid: userUUID,
+    status: statusEnum.SUCCESS,
+   })
+   .andWhere(function () {
+    this.where('created_at', '>', moment().subtract(30, 'days').format())
+   })
+   .select('created_at', 'currency')
+   .groupByRaw('created_at')
+   .groupBy('currency')
+   .orderBy('created_at', 'asc')
+   .sum('amount_received as amount')
+
+  const formattedChartData = await this.formatDataForChartOnDashboard(lastThirtyDaysTransactionsForChart)
+
   const recentTransactions = await db('wallets')
    .where({
     user_uuid: userUUID,
    })
    .orderBy('created_at', 'desc')
+   .limit(8)
 
   if (!userAccountBalances) {
    throw new NotFound('Stats Not Available Currently')
@@ -43,6 +62,7 @@ export default class TransactionsService {
 
   return {
    account_balance: userAccountBalances,
+   last_thirty_days_transactions: formattedChartData,
    recent_transactions: recentTransactions,
   }
  }
@@ -217,8 +237,19 @@ export default class TransactionsService {
   * @returns
   */
  public static async listTransactions(userUUID: string, page: number) {
-  const transactions = await CrudRepo.fetchAllandPaginate('wallets', 'user_uuid', userUUID, 20, page)
-  if(!transactions){ throw new NotFound('You Have Not Performed Any Transaction')}
+   const numberOfRowsPerPage:number = 20
+  const transactions = await CrudRepo.fetchAllandPaginate(
+   'wallets',
+   'user_uuid',
+   userUUID,
+   numberOfRowsPerPage,
+   page
+  )
+
+  
+  if (!transactions) {
+   throw new NotFound('You Have Not Performed Any Transaction')
+  }
   return transactions
  }
 
@@ -275,7 +306,6 @@ export default class TransactionsService {
   })
 
   const fee = await this.calculateNairaWithdrawalFee(payload.amount)
-  console.log('>>>>>> ', fee)
 
   if (res.data.success === true) {
    await CrudRepo.create('wallets', {
@@ -294,5 +324,56 @@ export default class TransactionsService {
   }
 
   return 'Processing Withdrawal'
+ }
+
+/**
+ * Formats data for use by chart on dashboard
+ * @param dataToFormat 
+ * @returns 
+ */
+ private static async formatDataForChartOnDashboard(dataToFormat:Array<ChartDataInterface>){
+  const formattedChartData: Array<{}> = [] // frontend expectects array of objects
+  const usdObject: { name: string; data: any } = {
+   name: '',
+   data: {},
+  }
+
+  const gbpObject: { name: string; data: any } = {
+   name: '',
+   data: {},
+  }
+
+  const eurObject: { name: string; data: any } = {
+    name: '',
+    data: {},
+   }
+ 
+   const ngnObject: { name: string; data: any } = {
+    name: '',
+    data: {},
+   }
+
+   dataToFormat.map((item) => {
+   if (item.currency === CurrencyEnum.USD) {
+    usdObject.name = item.currency
+    usdObject.data[moment(item.created_at).format('LLL')] = item.amount
+   }
+
+   if (item.currency === CurrencyEnum.GBP) {
+    gbpObject.name = item.currency
+    gbpObject.data[moment(item.created_at).format('LLL')] = item.amount
+   }
+
+   if (item.currency === CurrencyEnum.EUR) {
+    eurObject.name = item.currency
+    eurObject.data[moment(item.created_at).format('LLL')] = item.amount
+   }
+  })
+
+  formattedChartData.push(usdObject)
+  formattedChartData.push(gbpObject)
+  formattedChartData.push(eurObject)
+
+  return formattedChartData
  }
 }

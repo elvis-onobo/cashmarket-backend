@@ -37,6 +37,7 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^1.0.3",
     "knex-paginate": "^3.0.1",
+    "moment": "^2.29.3",
     "mysql2": "^2.3.3",
     "nodemailer": "^6.7.4",
     "nodemailer-express-handlebars": "^5.0.0",
