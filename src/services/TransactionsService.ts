@@ -267,6 +267,8 @@ export default class TransactionsService {
    'reference',
    'amount_received',
    'currency',
+   'status',
+   'created_at',
    page
   )
 

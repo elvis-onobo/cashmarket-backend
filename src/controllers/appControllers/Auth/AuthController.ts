@@ -80,8 +80,6 @@ export default class AuthController {
   */
  public static async updateProfile(req: Request, res: Response) {
   const uuid = req.userInfo.uuid as string
-  console.log('uuid >>> ', uuid);
-  
   if(!uuid){ throw new NotFound('User Not Found') }
   await updateProfileValidator.validateAsync(req.body)
   const data = await AuthService.updateProfile(req.body, uuid)

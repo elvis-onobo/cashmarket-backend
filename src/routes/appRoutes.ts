@@ -11,6 +11,7 @@ import AuthController from '../controllers/appControllers/Auth/AuthController'
 import VirtualAccountsController from '../controllers/appControllers/VirtualAccountsController'
 import BankAccountController from '../controllers/appControllers/BankAccountController'
 import TransactionsController from '../controllers/appControllers/TransactionsController'
+import NotificationController from '../controllers/appControllers/NotificationController'
 
 import WebhookController from '../controllers/appControllers/WebhookController'
 
@@ -39,5 +40,10 @@ appRouter.post('/convert-funds', authMiddleware, TransactionsController.convertF
 appRouter.post('/search', authMiddleware, TransactionsController.searchTransactions)
 appRouter.get('/list-transactions', authMiddleware, TransactionsController.listTransactions)
 appRouter.post('/withdraw', authMiddleware, TransactionsController.withdraw)
+appRouter.get('/update-login-notification', authMiddleware, NotificationController.updateLoginNotification)
+appRouter.get('/update-withdrawal-notification', authMiddleware, NotificationController.updateWithdrawNotification)
+appRouter.get('/update-deposit-notification', authMiddleware, NotificationController.updateDepositNotification)
+appRouter.get('/update-conversion-notification', authMiddleware, NotificationController.updateConversionNotification)
+appRouter.get('/notifications', authMiddleware, NotificationController.fetchNotifications)
 // Webhook
 appRouter.post('/webhook', WebhookController.trigger)

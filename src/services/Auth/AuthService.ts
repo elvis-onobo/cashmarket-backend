@@ -56,9 +56,9 @@ export default class AuthService {
    },
   }
 
-  // await MessageQueue.publish('general', emailData)
+  await MessageQueue.publish('general', emailData)
 
-  // await MessageQueue.consume('general', 'send::email')
+  await MessageQueue.consume('general', 'send::email')
 
   return {
    user,
@@ -93,7 +93,18 @@ export default class AuthService {
    verification_code: randomCode(),
   })
 
+  
   const userInfo: UserModelInterface = await CrudRepo.fetchOneBy('users', 'id', user[0])
+  
+  // set all notifications to active
+  const notification = await CrudRepo.create('notifications', {
+    uuid: uuidv4(),
+    user_uuid: userInfo.uuid,
+    login: true,
+    withdrawal: true,
+    deposit: true,
+    conversion: true
+  })
 
   const emailData = {
    template: 'verifyEmail',
