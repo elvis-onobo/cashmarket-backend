@@ -119,4 +119,15 @@ export default class CrudRepo {
    .orWhere(row5, 'like', `%${value}%`)
    .paginate({ perPage, currentPage: page, isLengthAware: true })
  }
+
+ /**
+  * Perform a search for just one field
+  * @param table 
+  * @param value 
+  * @param row 
+  * @returns 
+  */
+ public static async searchOne(table: string, value: string, row: string) {
+  return await db(table).where(row, 'like', `%${value}%`).first()
+ }
 }

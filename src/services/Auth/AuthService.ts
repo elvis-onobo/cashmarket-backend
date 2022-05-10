@@ -56,9 +56,9 @@ export default class AuthService {
    },
   }
 
-  await MessageQueue.publish('general', emailData)
+  // MessageQueue.publish('general', emailData)
 
-  await MessageQueue.consume('general', 'send::email')
+  // MessageQueue.consume('general', 'send::email')
 
   return {
    user,
@@ -116,9 +116,9 @@ export default class AuthService {
    },
   }
 
-  // await MessageQueue.publish('general', emailData)
+  // MessageQueue.publish('general', emailData)
 
-  // await MessageQueue.consume('general', 'send::email')
+  // MessageQueue.consume('general', 'send::email')
 
   return 'Registration Successful'
  }

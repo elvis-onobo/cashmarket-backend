@@ -4,7 +4,7 @@ import CrudRepo from '../repository/CrudRepo'
 import {
  ConvertFundsInterface,
  WithdrawalInterface,
- ChartDataInterface
+ ChartDataInterface,
 } from '../interfaces/TransactionsInterface'
 import { NotFound, UnprocessableEntity } from 'http-errors'
 import { statusEnum } from '../Enums/StatusEnum'
@@ -14,6 +14,7 @@ import { settlementDestination } from '../Enums/SettlementDestinationsEnum'
 import MessageQueue from '../config/messageQueue'
 import Fincra from '../config/axios-fincra'
 import moment from 'moment'
+import randomstring from 'randomstring'
 
 const businessId = process.env.FINCRA_BUSINESS_ID
 
@@ -33,7 +34,7 @@ export default class TransactionsService {
    .groupBy('currency')
    .sum('amount_received as balance')
 
-  const lastThirtyDaysTransactionsForChart:ChartDataInterface[] = await db('wallets')
+  const lastThirtyDaysTransactionsForChart: ChartDataInterface[] = await db('wallets')
    .where({
     user_uuid: userUUID,
     status: statusEnum.SUCCESS,
@@ -47,7 +48,9 @@ export default class TransactionsService {
    .orderBy('created_at', 'asc')
    .sum('amount_received as amount')
 
-  const formattedChartData = await this.formatDataForChartOnDashboard(lastThirtyDaysTransactionsForChart)
+  const formattedChartData = await this.formatDataForChartOnDashboard(
+   lastThirtyDaysTransactionsForChart
+  )
 
   const recentTransactions = await db('wallets')
    .where({
@@ -85,31 +88,15 @@ export default class TransactionsService {
   * @returns
   */
  public static async conversionRate() {
-  return 589
- }
+  const todaysDate = moment().format('YYYY-MM-DD')
+  const conversionRate = await CrudRepo.searchOne('rates', todaysDate, 'created_at')
 
- /**
-  * Fee for converting currency
-  * @param amount
-  * @returns
-  */
- public static async calculateFee(amount: number) {
-  const fee = 0.02 * amount
-  return fee
- }
-
- public static async calculateNairaWithdrawalFee(amount: number) {
-  if (amount < 10000) {
-   return 20
+  if (!conversionRate) {
+   // get it from the external API and save it to Redis
+   throw new NotFound('Conversion Rate For Today Has Not Been Provided')
   }
 
-  if (amount > 10000 && amount < 10000) {
-   return 31
-  }
-
-  if (amount > 50000) {
-   return 50
-  }
+  return conversionRate
  }
 
  /**
@@ -121,6 +108,7 @@ export default class TransactionsService {
   const { source_currency, destination_currency, source_amount, account_to_pay } = payload
   const sourceAmount = Number(source_amount)
   const fee = await this.calculateFee(sourceAmount)
+  const transactionRef = `cine_${randomstring.generate(14)}`
 
   await db.transaction(async (trx) => {
    // get the balance of the account sending the money
@@ -153,9 +141,10 @@ export default class TransactionsService {
     throw new UnprocessableEntity('Insufficient funds')
    }
 
-   const conversionRate: number = await this.conversionRate()
-   const amountConvertedToNewCurrency: number = sourceAmount * conversionRate
-   const fee: number = 10 // fee should be a percentage of the total source amount
+   const conversionRate = await this.conversionRate()
+   const amountConvertedToNewCurrency: number = sourceAmount * conversionRate[source_currency]
+   console.log('Converted to >>>>>>>>>>>>>>>> ', conversionRate[source_currency])
+
    const amountReceived = amountConvertedToNewCurrency - fee
 
    // deduct source amount from source account
@@ -163,9 +152,9 @@ export default class TransactionsService {
     uuid: uuidv4(),
     user_uuid: userUUID,
     fincra_virtual_account_id: sourceAccount[0].fincra_virtual_account_id,
-    amount_received: -sourceAmount + -fee,
+    amount_received: Number((-sourceAmount + -fee)),
     customer_name: sourceAccount[0].account_name,
-    reference: uuidv4(),
+    reference: transactionRef,
     status: statusEnum.SUCCESS,
     settlement_destination:
      account_to_pay === settlementDestination.BANK_ACCOUNT
@@ -194,8 +183,8 @@ export default class TransactionsService {
      user_uuid: userUUID,
      fincra_virtual_account_id: destinationVirtualAccount.fincra_virtual_account_id,
      customer_name: destinationVirtualAccount.account_name,
-     amount_received: amountReceived,
-     reference: uuidv4(),
+     amount_received: Number(amountReceived),
+     reference: transactionRef,
      status: statusEnum.SUCCESS,
      settlement_destination: settlementDestination.VIRTUAL_ACCOUNT,
      currency: destination_currency,
@@ -210,9 +199,9 @@ export default class TransactionsService {
 
     const payoutToBankAccountData = {
      user_uuid: userUUID,
-     amount_received: amountReceived,
+     amount_received: Number(amountReceived),
      customer_name: recipientAccount.customer_name,
-     reference: uuidv4(),
+     reference: transactionRef,
      status: statusEnum.SUCCESS,
      settlement_destination: settlementDestination.BANK_ACCOUNT,
      settlement_account_number: recipientAccount.account_number,
@@ -226,7 +215,7 @@ export default class TransactionsService {
     MessageQueue.publish('conversion', payoutToBankAccountData)
    }
 
-   return 'Your transaction is processing.'
+   return 'Your Transaction Is Being Processed.'
   })
  }
 
@@ -237,7 +226,7 @@ export default class TransactionsService {
   * @returns
   */
  public static async listTransactions(userUUID: string, page: number) {
-   const numberOfRowsPerPage:number = 20
+  const numberOfRowsPerPage: number = 20
   const transactions = await CrudRepo.fetchAllandPaginate(
    'wallets',
    'user_uuid',
@@ -246,7 +235,6 @@ export default class TransactionsService {
    page
   )
 
-  
   if (!transactions) {
    throw new NotFound('You Have Not Performed Any Transaction')
   }
@@ -282,19 +270,19 @@ export default class TransactionsService {
   */
  public static async withdraw(payload: WithdrawalInterface, userUUID: string) {
   const balance = await this.getBalance(payload.currency, userUUID)
-  
+
   if (Number(balance[0].balance) < Number(payload.amount)) {
    throw new UnprocessableEntity('Insufficient funds')
   }
 
   let bankAccount = []
-  if(payload.bank_account_uuid){
-    bankAccount = await CrudRepo.fetchOneBy('bank_accounts', 'uuid', payload.bank_account_uuid)
+  if (payload.bank_account_uuid) {
+   bankAccount = await CrudRepo.fetchOneBy('bank_accounts', 'uuid', payload.bank_account_uuid)
   }
 
-  let accountHolderName:string =''
-  if(payload.first_name && payload.last_name){
-    accountHolderName = payload.first_name + payload.last_name
+  let accountHolderName: string = ''
+  if (payload.first_name && payload.last_name) {
+   accountHolderName = payload.first_name + payload.last_name
   }
 
   const res = await Fincra.post('/disbursements/payouts/', {
@@ -305,19 +293,22 @@ export default class TransactionsService {
    description: payload.description,
    customerReference: uuidv4(),
    beneficiary: {
-    lastName: payload.currency === CurrencyEnum.NGN ? bankAccount.customer_name: payload.first_name,
-    firstName: payload.currency === CurrencyEnum.NGN ? bankAccount.customer_name: payload.last_name,
-    accountNumber: payload.currency === CurrencyEnum.NGN ? bankAccount.account_number: payload.account_number,
-    accountHolderName: payload.currency === CurrencyEnum.NGN ? bankAccount.customer_name: accountHolderName,
+    lastName:
+     payload.currency === CurrencyEnum.NGN ? bankAccount.customer_name : payload.first_name,
+    firstName:
+     payload.currency === CurrencyEnum.NGN ? bankAccount.customer_name : payload.last_name,
+    accountNumber:
+     payload.currency === CurrencyEnum.NGN ? bankAccount.account_number : payload.account_number,
+    accountHolderName:
+     payload.currency === CurrencyEnum.NGN ? bankAccount.customer_name : accountHolderName,
     type: accountTypeEnum.INDIVIDUAL,
-    bankCode: payload.currency === CurrencyEnum.NGN ? bankAccount.bank_code: undefined,
-    country: payload.currency !== CurrencyEnum.NGN ? bankAccount.country_code: 'NG',
-    paymentScheme: payload.currency !== CurrencyEnum.NGN ? payload.payment_scheme: undefined,
-    sortCode: payload.currency !== CurrencyEnum.NGN ? payload.sort_code: undefined
+    bankCode: payload.currency === CurrencyEnum.NGN ? bankAccount.bank_code : undefined,
+    country: payload.currency !== CurrencyEnum.NGN ? bankAccount.country_code : 'NG',
+    paymentScheme: payload.currency !== CurrencyEnum.NGN ? payload.payment_scheme : undefined,
+    sortCode: payload.currency !== CurrencyEnum.NGN ? payload.sort_code : undefined,
    },
    paymentDestination: settlementDestination.BANK_ACCOUNT,
   })
-
 
   const fee = await this.calculateNairaWithdrawalFee(payload.amount)
 
@@ -326,14 +317,19 @@ export default class TransactionsService {
     uuid: uuidv4(),
     user_uuid: userUUID,
     amount_received: -payload.amount,
-    customer_name: payload.currency === CurrencyEnum.NGN ? bankAccount.customer_name: res.data.data.recipient.name,
+    customer_name:
+     payload.currency === CurrencyEnum.NGN
+      ? bankAccount.customer_name
+      : res.data.data.recipient.name,
     reference: res.data.data.reference,
     status: statusEnum.PROCESSING,
     // description: payload.description,
     currency: payload.currency,
     settlement_destination: settlementDestination.BANK_ACCOUNT,
-    settlement_account_number: payload.currency === CurrencyEnum.NGN ? bankAccount.account_number: payload.account_number,
-    settlement_account_bank: payload.currency === CurrencyEnum.NGN ? bankAccount.bank_code: payload.sort_code,
+    settlement_account_number:
+     payload.currency === CurrencyEnum.NGN ? bankAccount.account_number : payload.account_number,
+    settlement_account_bank:
+     payload.currency === CurrencyEnum.NGN ? bankAccount.bank_code : payload.sort_code,
     fee,
    })
   }
@@ -341,12 +337,46 @@ export default class TransactionsService {
   return 'Processing Withdrawal'
  }
 
-/**
- * Formats data for use by chart on dashboard
- * @param dataToFormat 
- * @returns 
- */
- private static async formatDataForChartOnDashboard(dataToFormat:Array<ChartDataInterface>){
+ /**
+  * **********************************************************************************************************************
+  *                                         PRIVATE METHODS
+  * **********************************************************************************************************************
+  */
+
+ /**
+  * Calculates what we are charging the customer
+  * @param sourceAmount
+  * @returns
+  */
+ private static async calculateFee(sourceAmount: number) {
+  return 0.01 * sourceAmount
+ }
+
+ /**
+  * Determines how much will be charged as transfer fees during withdrawal
+  * @param amount
+  * @returns
+  */
+ private static async calculateNairaWithdrawalFee(amount: number) {
+  if (amount < 10000) {
+   return 20
+  }
+
+  if (amount > 10000 && amount < 10000) {
+   return 31
+  }
+
+  if (amount > 50000) {
+   return 50
+  }
+ }
+
+ /**
+  * Formats data for use by chart on dashboard
+  * @param dataToFormat
+  * @returns
+  */
+ private static async formatDataForChartOnDashboard(dataToFormat: Array<ChartDataInterface>) {
   const formattedChartData: Array<{}> = [] // frontend expectects array of objects
   const usdObject: { name: string; data: any } = {
    name: '',
@@ -359,16 +389,16 @@ export default class TransactionsService {
   }
 
   const eurObject: { name: string; data: any } = {
-    name: '',
-    data: {},
-   }
- 
-   const ngnObject: { name: string; data: any } = {
-    name: '',
-    data: {},
-   }
+   name: '',
+   data: {},
+  }
 
-   dataToFormat.map((item) => {
+  const ngnObject: { name: string; data: any } = {
+   name: '',
+   data: {},
+  }
+
+  dataToFormat.map((item) => {
    if (item.currency === CurrencyEnum.USD) {
     usdObject.name = item.currency
     usdObject.data[moment(item.created_at).format('LLL')] = item.amount
