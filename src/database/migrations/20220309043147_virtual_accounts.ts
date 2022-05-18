@@ -6,7 +6,9 @@ export async function up(knex: Knex): Promise<void> {
   table.increments('id', { primaryKey: true })
   table.uuid('uuid').notNullable().unique()
   table.uuid('user_uuid').references('uuid').inTable('users').notNullable()
-  table.uuid('fincra_virtual_account_id').notNullable().unique()
+  table.uuid('fincra_virtual_account_id').nullable().unique()
+  table.string('stripe_source_id').nullable()
+  table.string('stripe_fingerprint').nullable()
   table.string('currency').notNullable()
   table.enu('currency_type', [Object.keys(CurrencyEnum)]).notNullable()
   table.string('status').notNullable()
@@ -20,6 +22,7 @@ export async function up(knex: Knex): Promise<void> {
   table.string('bank_swift_code').nullable()
   table.string('bank_code').nullable()
   table.string('country_code').nullable()
+  table.string('routing_number').nullable()
   table.timestamps(true, true)
  })
 }

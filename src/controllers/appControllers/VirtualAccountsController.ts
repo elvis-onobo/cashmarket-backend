@@ -24,6 +24,11 @@ export default class VirtualAccountsController{
         return successHandler('Naira Account Creation In progress', 200, data)(req, res)
     }
 
+    public static async createDollarAccount(req: Request, res: Response){
+        const data = await VirtualAccountsService.createDollarAccount(req.userInfo.uuid)
+        return successHandler('Dollar Account Creation In progress', 200, data)(req, res)
+    }
+
     public static async fetchVirtualAccounts(req: Request, res: Response){
         const data = await VirtualAccountsService.fetchVirtualAccounts(req.userInfo.uuid)
         return successHandler('Virtual Accounts Retreived', 200, data)(req, res)

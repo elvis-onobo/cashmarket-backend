@@ -38,10 +38,12 @@ export default class CrudRepo {
   row: string,
   value: any,
   perPage: number = 20,
-  page: number = 1
+  page: number = 1,
+  order: string = 'desc'
  ) {
   return await db(table)
    .where(row, value)
+   .orderBy('created_at', order)
    .paginate({ perPage: perPage, currentPage: page, isLengthAware: true })
  }
 
@@ -130,4 +132,13 @@ export default class CrudRepo {
  public static async searchOne(table: string, value: string, row: string) {
   return await db(table).where(row, 'like', `%${value}%`).first()
  }
+
+  /**
+  * Fetch all data from a table
+  * @param table
+  * @returns
+  */
+   public static async fetchAllFromTable(table: string) {
+    return await db.select('*').from(table)
+   }
 }
