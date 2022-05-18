@@ -57,4 +57,9 @@ export default class VirtualAccountsController {
   const data = await TransactionsService.searchTransactions(req.body, page)
   return successHandler('Search Successful', 200, data)(req, res)
  }
+
+ public static async getAllConversionRates(req: Request, res: Response){
+  const data = await TransactionsService.getAllConversionRates()
+  return successHandler('Conversion Rates Fetched Successfully', 200, data)(req, res)
+ }
 }

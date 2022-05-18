@@ -6,9 +6,9 @@ export async function up(knex: Knex): Promise<void> {
         table.increments('id')
         table.uuid('uuid').notNullable().unique()
         table.uuid('user_uuid').references('uuid').inTable('users').notNullable()
-        table.decimal('USD', 12,2).notNullable()
-        table.decimal('GBP', 12,2).notNullable()
-        table.decimal('EUR', 12,2).notNullable()
+        table.string('currency').notNullable()
+        table.decimal('buy').notNullable()
+        table.decimal('sell').notNullable()
         table.timestamps(true, true)
     })
 }

@@ -15,6 +15,7 @@ import MessageQueue from '../config/messageQueue'
 import Fincra from '../config/axios-fincra'
 import moment from 'moment'
 import randomstring from 'randomstring'
+import { ConversionTypeEnum } from '../Enums/ConversionTypeEnum'
 
 const businessId = process.env.FINCRA_BUSINESS_ID
 
@@ -87,9 +88,8 @@ export default class TransactionsService {
   * Query AbokiFX and return the parallel market exchange rates
   * @returns
   */
- public static async conversionRate() {
-  const todaysDate = moment().format('YYYY-MM-DD')
-  const conversionRate = await CrudRepo.searchOne('rates', todaysDate, 'created_at')
+ public static async conversionRate(currency: string) {
+  const conversionRate = await CrudRepo.fetchOneBy('rates', 'currency', currency)
 
   if (!conversionRate) {
    // get it from the external API and save it to Redis
@@ -105,7 +105,8 @@ export default class TransactionsService {
   * @param userUUID
   */
  public static async convertFunds(payload: ConvertFundsInterface, userUUID: string) {
-  const { source_currency, destination_currency, source_amount, account_to_pay } = payload
+  const { source_currency, destination_currency, source_amount, account_to_pay, conversion_type } =
+   payload
   const sourceAmount = Number(source_amount)
   const fee = await this.calculateFee(sourceAmount)
   const transactionRef = `cine_${randomstring.generate(14)}`
@@ -141,9 +142,12 @@ export default class TransactionsService {
     throw new UnprocessableEntity('Insufficient funds')
    }
 
-   const conversionRate = await this.conversionRate()
-   const amountConvertedToNewCurrency: number = sourceAmount * conversionRate[source_currency]
-   console.log('Converted to >>>>>>>>>>>>>>>> ', conversionRate[source_currency])
+   const conversionRateObject = await this.conversionRate(source_currency)
+   const conversionRate =
+    conversion_type === ConversionTypeEnum.BUY
+     ? conversionRateObject.buy
+     : conversionRateObject.sell
+   const amountConvertedToNewCurrency: number = sourceAmount * conversionRate
 
    const amountReceived = amountConvertedToNewCurrency - fee
 
@@ -152,7 +156,7 @@ export default class TransactionsService {
     uuid: uuidv4(),
     user_uuid: userUUID,
     fincra_virtual_account_id: sourceAccount[0].fincra_virtual_account_id,
-    amount_received: Number((-sourceAmount + -fee)),
+    amount_received: Number(-sourceAmount + -fee),
     customer_name: sourceAccount[0].account_name,
     reference: transactionRef,
     status: statusEnum.SUCCESS,
@@ -190,7 +194,9 @@ export default class TransactionsService {
      currency: destination_currency,
      fee,
     })
-   } else {
+   }
+
+   if (account_to_pay === settlementDestination.BANK_ACCOUNT) {
     const recipientAccount = await trx('bank_accounts').where({ uuid: account_to_pay }).first()
 
     if (!recipientAccount) {
@@ -338,6 +344,22 @@ export default class TransactionsService {
  }
 
  /**
+  * Fetch conversion rates
+  * @param currency 
+  * @returns 
+  */
+ public static async getAllConversionRates() {
+  const conversionRate = await CrudRepo.fetchAllFromTable('rates')
+
+  if (!conversionRate) {
+   // get it from the external API and save it to Redis
+   throw new NotFound('Conversion Rate Not Found')
+  }
+
+  return conversionRate
+ }
+
+ /**
   * **********************************************************************************************************************
   *                                         PRIVATE METHODS
   * **********************************************************************************************************************
@@ -349,7 +371,7 @@ export default class TransactionsService {
   * @returns
   */
  private static async calculateFee(sourceAmount: number) {
-  return 0.01 * sourceAmount
+  return 0.015 * sourceAmount // 1.5% 0f source amount
  }
 
  /**

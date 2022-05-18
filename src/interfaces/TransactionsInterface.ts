@@ -4,6 +4,7 @@ export interface ConvertFundsInterface {
  source_amount: number
  destination_amount: number
  account_to_pay: string
+ conversion_type: 'buy'|'sell'
 }
 
 export interface WithdrawalInterface {
